@@ -1,20 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dash | Home</title>
+    <title>Dash | Agri</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
-    
+
+    <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.0.min.css" type="text/css" />
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.0.min.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.6.0.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.6.0.min.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/dark/main.css">
+    <script src="https://js.arcgis.com/4.26/"></script>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/colors.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/parea.css') }}">
 </head>
 <body>
     <nav class="sidebar opened">
-
         <div class="logo_part">
             <div class="logo">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="30" height="30" viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve"><path d="M28.6,11.3V4.8c0-0.8-0.6-1.4-1.4-1.4h-6.5c-1.2,0-2.4,0.4-3.4,1c-0.5,0.3-0.9,0.7-1.3,1.2c-1.1-1.3-2.8-2.2-4.7-2.2H4.8  C4,3.4,3.4,4,3.4,4.8v6.5c0,1.9,0.9,3.5,2.2,4.7c-1.3,1.1-2.2,2.8-2.2,4.7v6.5c0,0.8,0.6,1.4,1.4,1.4h6.5c0.8,0,1.4-0.6,1.4-1.4  c0-0.8-0.6-1.4-1.4-1.4H6.2v-5.1c0-1.8,1.4-3.2,3.2-3.2h5.1v5.1c0,3.4,2.7,6.1,6.1,6.1h6.5c0.8,0,1.4-0.6,1.4-1.4v-6.5  c0-1.9-0.9-3.5-2.2-4.7C27.8,14.9,28.6,13.2,28.6,11.3z M9.5,14.6c-1.8,0-3.2-1.4-3.2-3.2V6.2h5.1c1.8,0,3.2,1.4,3.2,3.2v5.1H9.5z   M25.8,20.7v5.1h-5.1c-1.8,0-3.2-1.4-3.2-3.2v-5.1h5.1C24.3,17.4,25.8,18.9,25.8,20.7z M17.4,14.6V9.5c0-1.1,0.5-2.1,1.4-2.7  c0.5-0.4,1.2-0.6,1.8-0.6h5.1v5.1c0,1.8-1.4,3.2-3.2,3.2H17.4z" fill = "currentColor"/></svg>
@@ -22,7 +29,7 @@
             <p class="logo_name">Acme</p>
         </div>
         <div class="pages">
-            <a href="/dashboard/home?lat={{rlat}}&lon={{rlon}}" class="item home" status="selected">
+            <a href="/dashboard/home?lat={{rlat}}&lon={{rlon}}" class="item home" status="none">
                 <div class="icon">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg>
                 </div>
@@ -30,7 +37,7 @@
                     Home
                 </div>
             </a>
-            <div class="item climate" list="closed">
+            <div class="item climate" list="closed" status="none">
                 <div class="d">
                     <a href="/dashboard/climate?lat={{rlat}}&lon={{rlon}}&key=data&cOneDays=30" class="link">
                         <div class="icon">
@@ -104,21 +111,21 @@
                     </div>
                 </div>
                 <div class="l">
-                    <a href="/dashboard/soil/gwetprof?lat={{rlat}}&lon={{rlon}}&key=data" class="subitem">
+                    <a href="/dashboard/soil/gwetprof?lat={{lat}}&lon={{lon}}&key=data" class="subitem">
                         Profile Soil Moisture
                     </a>
-                    <a href="/dashboard/soil/gwetroot?lat={{rlat}}&lon={{rlon}}&key=data" class="subitem">
+                    <a href="/dashboard/soil/gwetroot?lat={{lat}}&lon={{lon}}&key=data" class="subitem">
                         Root Zone Soil Wetness
                     </a>
-                    <a href="/dashboard/soil/gwettop?lat={{rlat}}&lon={{rlon}}&key=data" class="subitem">
+                    <a href="/dashboard/soil/gwettop?lat={{lat}}&lon={{lon}}&key=data" class="subitem">
                         Surface Soil Wetness
                     </a>
-                    <a href="/dashboard/soil/zom?lat={{rlat}}&lon={{rlon}}&key=data" class="subitem">
+                    <a href="/dashboard/soil/zom?lat={{lat}}&lon={{lon}}&key=data" class="subitem">
                         Surface Roughness
                     </a>
                 </div>
             </div>
-            <div class="item agri" list="closed">
+            <div class="item agri" list="closed" status="selected">
                 <div class="d">
                     <a href="/dashboard/agri={{rlat}}&lon={{rlon}}&key=data" class="link">
                         <div class="icon">
@@ -161,105 +168,79 @@
             </div>
         </header>
         <section class="content">
-            <p class="crumblers"><span id="first">Dashboard</span><span>></span><span id="second">Home</span></p>
-            <h3 class="title">Home</h3>
-            <p class="text">
-                Location Coordinates are in WGS 84 Projection. The analysis goes for this point and its close surroundings.
-                We list here all the parameters that will be analyzed with their explanation. For further explanation, visit <a href="https://power.larc.nasa.gov/">Power Larc NASA</a>
-            </p>
-            <div class="cards">
-                <div class="card location">
-                    <p class="title">Location</p>
-                    <div class="text">
-                        <p class="type">Lon - Lat</p>
-                        <p class="cont">{{ lon }}° - {{ lat }}°</p>
-                    </div>
-                    <div class="other">
-                        <div class="svg">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="currentColor"><path d="M440-42v-80q-125-14-214.5-103.5T122-440H42v-80h80q14-125 103.5-214.5T440-838v-80h80v80q125 14 214.5 103.5T838-520h80v80h-80q-14 125-103.5 214.5T520-122v80h-80Zm40-158q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-120q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Zm0-80Z"/></svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="card timespan">
-                    <p class="title">Time Span</p>
-                    <div class="text">
-                        <p class="type">Start - End</p>
-                        <p class="cont">95 - 24</p>
-                    </div>
-                    <div class="other">
-                        <div class="svg">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="currentColor"><path d="M320-400q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm160 0q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm160 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="card parameters">
-                    <p class="title">Parameters</p>
-                    <div class="text">
-                        <p class="type">Number of parameters</p>
-                        <p class="cont">22</p>
-                    </div>
-                    <div class="other">
-                        <div class="svg">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="currentColor"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="paramDiv">
-                <h1 class="title">Parameters</h1>
-                <div class="params">
-                    <div class="param" status="closed">
-                        <div class="title">
-                            <p class="first">Evaporation Land</p>
-                            <div class="svg">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
-                            </div>
-                        </div>
-                        <div class="expl">
-                            Abbreviation: EVLAND <br>
-                            The evaporation over land at the surface of the earth
-                        </div>
-                    </div>
-                    <div class="param" status="closed">
-                        <div class="title">
-                            <p class="first">Evapotranspiration Energy Flux</p>
-                            <div class="svg">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
-                            </div>
-                        </div>
-                        <div class="expl">
-                            Abbreviation: EVPTRNS <br>
-                            The evapotranspiration energy flux at the surface of the earth
-                        </div>
-                    </div>
-                    <div class="param" status="closed">
-                        <div class="title">
-                            <p class="first">Profile Soil Moisture</p>
-                            <div class="svg">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
-                            </div>
-                        </div>
-                        <div class="expl">
-                            Abbreviation: GWETPROF <br>
-                            Profile Soil Moisture
-                        </div>
-                    </div>
-                    <div class="param" status="closed">
-                        <div class="title">
-                            <p class="first">Wind Speed at 2 Meters</p>
-                            <div class="svg">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
-                            </div>
-                        </div>
-                        <div class="expl">
-                            Abbreviation: WS2M <br>
-                            Wind Speed at 2 Meters
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div id="viewDiv"></div>
         </section>
     </section>
-    <script src="{{ url_for('static', filename='js/dash/home.js') }}"></script>
+    <script>
+        require([
+            "esri/Map", 
+            "esri/views/MapView",
+            "esri/widgets/Search",
+            "esri/widgets/ScaleBar",
+            "esri/layers/FeatureLayer",
+            "esri/Graphic"
+        ], function(Map, MapView, Search, ScaleBar, FeatureLayer, Graphic) {
+
+            // Initialize the map
+            var map = new Map({
+                basemap: "streets-night-vector" // Choose a basemap
+            });
+
+            var lat = {{ rlat | tojson }};
+            var lon = {{ rlon | tojson }};
+
+            // Set up the map view
+            var view = new MapView({
+                container: "viewDiv", // Reference to the map's container (div element)
+                map: map,              // Reference to the map object
+                center: [lon, lat], // Longitude, latitude of map's center
+                zoom: 3,                // Initial zoom level
+                minZoom: 2
+            });
+
+            // Add a search widget
+            var search = new Search({
+                view: view
+            });
+            view.ui.add(search, "top-right");
+            view.constraints.minZoom = 2
+
+            // Add a scale bar widget
+            var scaleBar = new ScaleBar({
+                view: view
+            });
+            view.ui.add(scaleBar, "bottom-left");
+
+            // Optional: Add a FeatureLayer if you want to display data on the map
+            var featureLayer = new FeatureLayer({
+                url: "https://services.arcgis.com/your-feature-layer-url"
+            });
+            map.add(featureLayer);
+
+            var markerSymbol = {
+                type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                color: "#fdcd0d",
+                size: "16px", // Adjust size as needed
+                outline: {
+                    color: "black",
+                    width: 1
+                }
+            };
+
+            var point = {
+                type: "point",
+                longitude: lon,
+                latitude: lat
+            };
+
+            var pointGraphic = new Graphic({
+                geometry: point,
+                symbol: markerSymbol
+            });
+
+            view.graphics.add(pointGraphic);
+        }); 
+    </script>
+    <script src="{{ url_for('static', filename='js/dash/agri/parea.js') }}"></script>
 </body>
 </html>

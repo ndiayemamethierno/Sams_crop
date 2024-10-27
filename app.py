@@ -3,6 +3,7 @@ from pymongo import MongoClient
 import numpy as np
 from bokeh.plotting import figure
 from bokeh.embed import components
+from urllib.parse import quote_plus
 
 from extern import fetch as f
 from extern.dash.clim import statClim as stc
@@ -10,7 +11,9 @@ from extern.dash.clim import plotClim as ptc
 from extern.dash.clim.params import stat as s
 from extern.dash.clim.params import plot as p
 
-client = MongoClient('mongodb://127.0.0.1:27017/mongosh?directConnection=true&serverSelectionTimeoutMS=2000')
+password = quote_plus("mongodbatlasBlessing16@#")
+uri = f"mongodb+srv://alagbehamid:{password}@sams.9s76z.mongodb.net/?retryWrites=true&w=majority&appName=sams"
+client = MongoClient(uri)
 db = client['sams']
 wsCol = db['wsCollection']
 
@@ -205,7 +208,7 @@ def loadDashClimate():
                            divSHum=divSHum
                         )
 
-@app.route(f'/dashboard/climate/evland', methods=['GET','POST'])
+@app.route('/dashboard/climate/evland', methods=['GET','POST'])
 def loadDashClimateEvland():
     if request.method == 'POST':
         lon = request.form['lon']
@@ -246,6 +249,285 @@ def loadDashClimateEvland():
                            divFcst = divFcst,
                            fcstDays = fcstDays,
                            table = table
+                        )
+
+@app.route('/dashboard/climate/evptrns', methods=['GET','POST'])
+def loadDashClimateEvptrns():
+    if request.method == 'POST':
+        lon = request.form['lon']
+        lat = request.form['lat']
+    else:
+        lon = request.args.get('lon', default=None)
+        lat = request.args.get('lat', default=None)
+        key = request.args.get('key', default=None)
+        startYear = request.args.get('startYear', default=1995)
+        endYear = request.args.get('endYear', default=2024)
+        groupBy = request.args.get('groupBy', default="default")
+        plotType = request.args.get('plotType', default="scatter")
+        fcstDays = request.args.get('fcstDays', default="90")
+
+    avg = s.calcMean(key=key, param="EVPTRNS")
+    min, minDate = s.calcMin(key=key, param="EVPTRNS")
+    max, maxDate = s.calcMax(key=key, param="EVPTRNS")
+    plot = p.plot(key=key, param="EVPTRNS", 
+                  startYear=f"{startYear}0101", endYear=f"{endYear}1231", 
+                  groupBy=groupBy, plotType=plotType,
+                  color="#e17256")
+    fcstPlot = p.fcstPlot(key=key, param="EVPTRNS", period=int(fcstDays),
+                        fColor="#533d8f", sColorLow="#00b893", sColorUp="#d62e2e")
+    script, div = components(plot)
+    scriptFcst, divFcst = components(fcstPlot)
+    table = s.showFcstTable(key=key, param="EVPTRNS", period=int(fcstDays))
+    return render_template('dashboard/climate/evptrns.html',
+                           rlat = lat,
+                           rlon = lon,
+                           avg = avg[0],
+                           min = min,
+                           max = max,
+                           minDate = minDate,
+                           maxDate = maxDate,
+                           script = script,
+                           div = div,
+                           scriptFcst = scriptFcst,
+                           divFcst = divFcst,
+                           fcstDays = fcstDays,
+                           table = table
+                        )
+
+
+@app.route('/dashboard/climate/ws2m', methods=['GET','POST'])
+def loadDashClimateWs2m():
+    if request.method == 'POST':
+        lon = request.form['lon']
+        lat = request.form['lat']
+    else:
+        lon = request.args.get('lon', default=None)
+        lat = request.args.get('lat', default=None)
+        key = request.args.get('key', default=None)
+        startYear = request.args.get('startYear', default=1995)
+        endYear = request.args.get('endYear', default=2024)
+        groupBy = request.args.get('groupBy', default="default")
+        plotType = request.args.get('plotType', default="scatter")
+        fcstDays = request.args.get('fcstDays', default="90")
+
+    avg = s.calcMean(key=key, param="WS2M")
+    min, minDate = s.calcMin(key=key, param="WS2M")
+    max, maxDate = s.calcMax(key=key, param="WS2M")
+    plot = p.plot(key=key, param="WS2M", 
+                  startYear=f"{startYear}0101", endYear=f"{endYear}1231", 
+                  groupBy=groupBy, plotType=plotType,
+                  color="#e17256")
+    fcstPlot = p.fcstPlot(key=key, param="WS2M", period=int(fcstDays),
+                        fColor="#533d8f", sColorLow="#00b893", sColorUp="#d62e2e")
+    script, div = components(plot)
+    scriptFcst, divFcst = components(fcstPlot)
+    table = s.showFcstTable(key=key, param="WS2M", period=int(fcstDays))
+    return render_template('dashboard/climate/ws2m.html',
+                           rlat = lat,
+                           rlon = lon,
+                           avg = avg[0],
+                           min = min,
+                           max = max,
+                           minDate = minDate,
+                           maxDate = maxDate,
+                           script = script,
+                           div = div,
+                           scriptFcst = scriptFcst,
+                           divFcst = divFcst,
+                           fcstDays = fcstDays,
+                           table = table
+                        )
+
+@app.route('/dashboard/climate/t2m', methods=['GET','POST'])
+def loadDashClimateT2m():
+    if request.method == 'POST':
+        lon = request.form['lon']
+        lat = request.form['lat']
+    else:
+        lon = request.args.get('lon', default=None)
+        lat = request.args.get('lat', default=None)
+        key = request.args.get('key', default=None)
+        startYear = request.args.get('startYear', default=1995)
+        endYear = request.args.get('endYear', default=2024)
+        groupBy = request.args.get('groupBy', default="default")
+        plotType = request.args.get('plotType', default="scatter")
+        fcstDays = request.args.get('fcstDays', default="90")
+
+    avg = s.calcMean(key=key, param="T2M")
+    min, minDate = s.calcMin(key=key, param="T2M")
+    max, maxDate = s.calcMax(key=key, param="T2M")
+    plot = p.plot(key=key, param="T2M", 
+                  startYear=f"{startYear}0101", endYear=f"{endYear}1231", 
+                  groupBy=groupBy, plotType=plotType,
+                  color="#e17256")
+    fcstPlot = p.fcstPlot(key=key, param="T2M", period=int(fcstDays),
+                        fColor="#533d8f", sColorLow="#00b893", sColorUp="#d62e2e")
+    script, div = components(plot)
+    scriptFcst, divFcst = components(fcstPlot)
+    table = s.showFcstTable(key=key, param="T2M", period=int(fcstDays))
+    return render_template('dashboard/climate/t2m.html',
+                           rlat = lat,
+                           rlon = lon,
+                           avg = avg[0],
+                           min = min,
+                           max = max,
+                           minDate = minDate,
+                           maxDate = maxDate,
+                           script = script,
+                           div = div,
+                           scriptFcst = scriptFcst,
+                           divFcst = divFcst,
+                           fcstDays = fcstDays,
+                           table = table
+                        )
+
+@app.route('/dashboard/climate/ts', methods=['GET','POST'])
+def loadDashClimateTs():
+    if request.method == 'POST':
+        lon = request.form['lon']
+        lat = request.form['lat']
+    else:
+        lon = request.args.get('lon', default=None)
+        lat = request.args.get('lat', default=None)
+        key = request.args.get('key', default=None)
+        startYear = request.args.get('startYear', default=1995)
+        endYear = request.args.get('endYear', default=2024)
+        groupBy = request.args.get('groupBy', default="default")
+        plotType = request.args.get('plotType', default="scatter")
+        fcstDays = request.args.get('fcstDays', default="90")
+
+    avg = s.calcMean(key=key, param="TS")
+    min, minDate = s.calcMin(key=key, param="TS")
+    max, maxDate = s.calcMax(key=key, param="TS")
+    plot = p.plot(key=key, param="TS", 
+                  startYear=f"{startYear}0101", endYear=f"{endYear}1231", 
+                  groupBy=groupBy, plotType=plotType,
+                  color="#e17256")
+    fcstPlot = p.fcstPlot(key=key, param="TS", period=int(fcstDays),
+                        fColor="#533d8f", sColorLow="#00b893", sColorUp="#d62e2e")
+    script, div = components(plot)
+    scriptFcst, divFcst = components(fcstPlot)
+    table = s.showFcstTable(key=key, param="TS", period=int(fcstDays))
+    return render_template('dashboard/climate/ts.html',
+                           rlat = lat,
+                           rlon = lon,
+                           avg = avg[0],
+                           min = min,
+                           max = max,
+                           minDate = minDate,
+                           maxDate = maxDate,
+                           script = script,
+                           div = div,
+                           scriptFcst = scriptFcst,
+                           divFcst = divFcst,
+                           fcstDays = fcstDays,
+                           table = table
+                        )
+
+@app.route('/dashboard/climate/qv2m', methods=['GET','POST'])
+def loadDashClimateQv2m():
+    if request.method == 'POST':
+        lon = request.form['lon']
+        lat = request.form['lat']
+    else:
+        lon = request.args.get('lon', default=None)
+        lat = request.args.get('lat', default=None)
+        key = request.args.get('key', default=None)
+        startYear = request.args.get('startYear', default=1995)
+        endYear = request.args.get('endYear', default=2024)
+        groupBy = request.args.get('groupBy', default="default")
+        plotType = request.args.get('plotType', default="scatter")
+        fcstDays = request.args.get('fcstDays', default="90")
+
+    avg = s.calcMean(key=key, param="QV2M")
+    min, minDate = s.calcMin(key=key, param="QV2M")
+    max, maxDate = s.calcMax(key=key, param="QV2M")
+    plot = p.plot(key=key, param="QV2M", 
+                  startYear=f"{startYear}0101", endYear=f"{endYear}1231", 
+                  groupBy=groupBy, plotType=plotType,
+                  color="#e17256")
+    fcstPlot = p.fcstPlot(key=key, param="QV2M", period=int(fcstDays),
+                        fColor="#533d8f", sColorLow="#00b893", sColorUp="#d62e2e")
+    script, div = components(plot)
+    scriptFcst, divFcst = components(fcstPlot)
+    table = s.showFcstTable(key=key, param="QV2M", period=int(fcstDays))
+    return render_template('dashboard/climate/qv2m.html',
+                           rlat = lat,
+                           rlon = lon,
+                           avg = avg[0],
+                           min = min,
+                           max = max,
+                           minDate = minDate,
+                           maxDate = maxDate,
+                           script = script,
+                           div = div,
+                           scriptFcst = scriptFcst,
+                           divFcst = divFcst,
+                           fcstDays = fcstDays,
+                           table = table
+                        )
+
+@app.route('/dashboard/climate/rh2m', methods=['GET','POST'])
+def loadDashClimateRh2m():
+    if request.method == 'POST':
+        lon = request.form['lon']
+        lat = request.form['lat']
+    else:
+        lon = request.args.get('lon', default=None)
+        lat = request.args.get('lat', default=None)
+        key = request.args.get('key', default=None)
+        startYear = request.args.get('startYear', default=1995)
+        endYear = request.args.get('endYear', default=2024)
+        groupBy = request.args.get('groupBy', default="default")
+        plotType = request.args.get('plotType', default="scatter")
+        fcstDays = request.args.get('fcstDays', default="90")
+
+    avg = s.calcMean(key=key, param="RH2M")
+    min, minDate = s.calcMin(key=key, param="RH2M")
+    max, maxDate = s.calcMax(key=key, param="RH2M")
+    plot = p.plot(key=key, param="RH2M", 
+                  startYear=f"{startYear}0101", endYear=f"{endYear}1231", 
+                  groupBy=groupBy, plotType=plotType,
+                  color="#e17256")
+    fcstPlot = p.fcstPlot(key=key, param="RH2M", period=int(fcstDays),
+                        fColor="#533d8f", sColorLow="#00b893", sColorUp="#d62e2e")
+    script, div = components(plot)
+    scriptFcst, divFcst = components(fcstPlot)
+    table = s.showFcstTable(key=key, param="RH2M", period=int(fcstDays))
+    return render_template('dashboard/climate/rh2m.html',
+                           rlat = lat,
+                           rlon = lon,
+                           avg = avg[0],
+                           min = min,
+                           max = max,
+                           minDate = minDate,
+                           maxDate = maxDate,
+                           script = script,
+                           div = div,
+                           scriptFcst = scriptFcst,
+                           divFcst = divFcst,
+                           fcstDays = fcstDays,
+                           table = table
+                        )
+
+
+
+
+@app.route('/dashboard/agri/parea', methods=['GET','POST'])
+def loadDashAgriPhysicalArea():
+    if request.method == 'POST':
+        lon = request.form['lon']
+        lat = request.form['lat']
+    else:
+        lon = request.args.get('lon', default=None)
+        lat = request.args.get('lat', default=None)
+        key = request.args.get('key', default=None)
+
+    #nCentroid = f.getNearestCentroid(float(lat), float(lon))
+
+    return render_template('dashboard/agri/parea.html',
+                           rlat = lat,
+                           rlon = lon
                         )
 
 if __name__ == '__main__':

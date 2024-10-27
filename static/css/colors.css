@@ -27,7 +27,7 @@
     /*Colors*/
     --red: hsl(348, 80%, 50%);
     --green: hsl(168, 100%, 36%);
-    --orange: hsl(48, 98%, 52%);
+    --orange: #fdcd0d;
 
     /*Additional colors*/
     --color1: hsl(163, 83%, 64%);

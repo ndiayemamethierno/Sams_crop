@@ -17,14 +17,14 @@ def calcMean(key: str, param: str):
 
 def calcMin(key: str, param: str):
     dt = dtmaker.transform(key)[[param]]
-    min = dt['EVLAND'].min()
-    date = dt[dt['EVLAND'] == min].index[0]
+    min = dt[param].min()
+    date = dt[dt[param] == min].index[0]
     return min, date
 
 def calcMax(key: str, param: str):
     dt = dtmaker.transform(key)[[param]]
-    max = dt['EVLAND'].max()
-    date = dt[dt['EVLAND'] == max].index[0]
+    max = dt[param].max()
+    date = dt[dt[param] == max].index[0]
     return max, date
 
 def foreCast(key: str, param: str, period: int):
