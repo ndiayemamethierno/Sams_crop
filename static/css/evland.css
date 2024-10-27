@@ -1,0 +1,274 @@
+.cards#first .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    padding: 15px 20px;
+}
+
+.cards#first .card.avg {
+    border-top: 5px solid var(--color8);
+}
+
+.cards#first .card.min {
+    border-top: 5px solid var(--color18);
+}
+
+.cards#first .card.max {
+    border-top: 5px solid var(--color6);
+}
+
+.cards#first .card.corr {
+    border-top: 5px solid var(--color9);
+}
+
+.cards#first .card .other {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.cards#first .card .other .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+}
+
+.content .cards#second {
+    display: grid;
+    grid-template-columns: 2fr 4fr;
+    gap: 15px;
+    height: 100%;
+    width: 100%;
+}
+
+.content .cards#second .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.content .cards#second .card .item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.content .cards#second .card button {
+    margin-top: 20px;
+    width: 45%;
+    padding: 8px 10px;
+    border: 1px solid var(--black);
+    outline: none;
+}
+
+.content .cards#second .card button:hover {
+    background: var(--white);
+}
+
+.content .cards#second .card .item .text {
+    font-size: 14px;
+    width: 100%;
+    text-align: left;
+    padding: 4px 10px;
+}
+
+.content .cards#second .card .item .select {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 5px 10px;
+    border: 1px solid var(--lighter-sidebar-bg);
+}
+
+.content .cards#second .card .item .select:focus {
+    outline: none;
+}
+
+.content .cards#second .card .item .selects {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.content .cards#second .card .item .selects .item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.content .cards#second .card .item .selects .item .text {
+    font-size: 12px;
+    padding: 4px 10px;
+}
+
+.content .cards#second .card .item .selects .item .select {
+    width: 95%;
+    padding: 5px 10px;
+    border: 1px solid var(--lighter-sidebar-bg);
+}
+
+.content .cards#second .card .item .selects .item .select:focus {
+    outline: none;
+}
+
+.content .cards#second .card .first {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.content .cards#second .card .first .text {
+    padding: 5px 15px;
+    font-size: 1.5rem;
+    color: var(--black);
+}
+
+.content .cards#second .card .first .svg {
+    padding: 6px;
+    background: var(--color9);
+    color: var(--white);
+    border-radius: 3px;
+    margin-right: 8px;
+}
+
+.content .cards#third #selectdays {
+    width: 30%;
+    padding: 5px 10px;
+    border: 1px solid var(--lighter-sidebar-bg);
+    margin-left: 10px;
+    margin-bottom: 15px;
+}
+
+.content .cards#third {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    border-radius: 3px;
+    padding: 15px 20px;
+}
+
+.content .cards#third #selectdays:focus {
+    outline: none;
+}
+
+.content .cards#third .subcards {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 15px;
+    height: 100%;
+    width: 100%;
+}
+
+.content .cards#third .subcards .subcard {
+    width: 100%;
+    height: 100%;
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 25px 25px;
+}
+
+.content .cards#third .subcards .subcard#graph {
+    height: 300px;
+}
+
+.content .cards#third .subcards .subcard#table {
+    max-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.content .cards#third .subcards .subcard#table::-webkit-scrollbar {
+    display: none;
+}
+
+
+.content .cards#third .subcards .subcard#table table {
+    width: 100%;
+    border: none;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.content .cards#third .subcards .subcard#table table th,
+.content .cards#third .subcards .subcard#table table td {
+    border: none;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.content .cards#third .subcards .subcard#table table th {
+    text-align: left;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.content .cards#third .subcards .subcard#table table td {
+    font-size: 13px;
+    font-weight: 300;
+}
+
+.content .cards#third .subcards .subcard#table table td:first-child,
+.content .cards#third .subcards .subcard#table table th:first-child {
+    width: 30%;
+}
+
+.content .cards#third .subcards .subcard#table table tbody tr {
+    width: 100%;
+    border-bottom: 1px solid var(--border);
+}
+
+.content .cards#third .subcards .subcard#table table tbody tr td {
+    padding: 1px 5px;
+    text-align: start;
+}
+
+.content .cards#third .subcards .subcard#table table tbody tr td::before {
+    display: inline-block;
+    margin-right: 4px;
+}
+
+.content .cards#third .subcards .subcard#table table tbody tr td.up::before {
+    content: "\25B2";
+    color: var(--green);
+}
+
+.content .cards#third .subcards .subcard#table table tbody tr td.down::before {
+    content: "\25BC";
+    color: var(--red);
+}
+
+.content .cards#third .subcards .subcard#table table tbody tr td.equal::before {
+    content: "—";
+    color: var(--orange);
+}
+
+
+
+
+
+
+

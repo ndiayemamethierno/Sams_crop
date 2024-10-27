@@ -1,0 +1,469 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-family: "Lato", serif;
+    height: 100vh;
+    background: var(--bg);
+}
+
+.sidebar {
+    background: var(--black);
+    width: 20%;
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    position: fixed;
+    top: 0;
+    transition: 0.3s ease;
+    border-right: 3px solid var(--lighter-sidebar-bg); 
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+.sidebar.opened {
+    left: 0;
+}
+
+.sidebar.opened ~ .main {
+    left: 20%;
+}
+
+.sidebar.closed {
+    left: -100%;
+}
+
+.sidebar.closed ~ .main {
+    left: 0;
+    width: 100%;
+}
+
+.sidebar.closed ~ .main .content {
+    margin-top: 3.8%;
+}
+
+.sidebar .logo_part {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+}
+
+.sidebar p {
+    color: var(--white);
+}
+
+.sidebar .logo_part .logo {
+    color: var(--lighter-sidebar-bg);
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar .logo_part p {
+    font-size: 1.5rem;
+}
+
+.sidebar .pages {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    color: var(--white);
+}
+
+.sidebar .pages a.item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    text-decoration: none;
+    padding: 8px 20px;
+    margin-bottom: 8px;
+    color: var(--white);
+    cursor: pointer;
+}
+
+.sidebar .pages a.item[status="selected"] {
+    background: var(--lighter-sidebar-bg);
+}
+
+.sidebar .pages a.item[status="none"] {
+    background: transparent;
+}
+
+.sidebar .pages div.item[list="closed"] > .l {
+    display: none;
+}
+
+.sidebar .pages div.item[list="opened"] > .l {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.sidebar .pages div.item[status="selected"] > .d {
+    background: var(--lighter-sidebar-bg);
+}
+
+.sidebar .pages div.item[status="none"] > .d {
+    background: transparent;
+}
+
+.sidebar .pages a.item:hover {
+    background: var(--lighter-sidebar-bg);
+}
+
+.sidebar .pages a.item .icon {
+    margin-right: 15px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar .pages .item .text {
+    width: 85%;
+    font-weight: 300;
+}
+
+.sidebar .pages .item .chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(180deg);
+    width: 15%;
+}
+
+.sidebar .pages .item .chevron:hover {
+    background: var(--sidebar-bg);
+}
+
+.sidebar .pages div.item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    width: 100%;
+}
+
+.sidebar .pages div.item .d {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
+
+.sidebar .pages div.item .d:hover {
+    background: var(--lighter-sidebar-bg);
+}
+
+.sidebar .pages div.item .link {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    text-decoration: none;
+    padding: 8px 20px;
+    margin-bottom: 8px;
+    color: var(--white);
+    cursor: pointer;
+}
+
+.sidebar .pages div.item .link .icon {
+    margin-right: 15px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar .pages div.item .link .text {
+    width: 75%;
+    font-weight: 300;
+}
+
+.sidebar .pages div.item .chevron {
+    width: 15%;
+    padding: 10px;
+    border-radius: 50%;
+}
+
+.sidebar .pages div.item .l {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar .pages div.item .l .subitem {
+    width: 100%;
+    text-decoration: none;
+    padding: 8px 20px;
+    margin-bottom: 8px;
+    color: var(--white);
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.sidebar .pages div.item .l .subitem:hover {
+    background: var(--dark-grey);
+    text-decoration: underline;
+    text-decoration-style: dashed;
+}
+
+.main {
+    width: 80%;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: 0.2s ease;
+}
+
+.main .header {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    width: 100%;
+    padding: 15px 20px;
+    position: fixed;
+    z-index: 10;
+    height: 8%;
+    background: var(--high-light-3);
+    color: var(--white);
+}
+
+.main .header .left {
+    display: flex;
+    align-items: center;
+    width: auto;
+    padding: 3px 10px;
+    cursor: pointer;
+}
+
+.main .header .left:hover {
+    background: var(--dark-grey);
+}
+
+.main .header .left .menu_icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    color: var(--white);
+}
+
+.main .content {
+    margin-top: 4.5%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    height: 92%;
+    padding: 10px 15px;
+    position: relative;
+    width: 100%;
+}
+
+.main .content .crumblers {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--black);
+    font-size: 13px;
+    width: 12%;
+    border-bottom: 1px solid var(--black);
+}
+
+.main .content .crumblers #first {
+    color: var(--black);
+    font-size: 12px;
+}
+
+.main .content .crumblers #second {
+    color: var(--dark-grey);
+    font-size: 14px;
+}
+
+.main .content .title {
+    margin-top: 5px;
+    color: var(--black);
+    font-weight: 500;
+}
+
+.main .content .text {
+    font-size: 13px;
+    color: var(--black);
+}
+
+.main .content .text a {
+    color: var(--lighter-sidebar-bg);
+    text-decoration: none;
+}
+
+.content .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    padding: 15px 40px;
+    width: 100%;
+}
+
+.content .cards .card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px 25px;
+}
+
+.card {
+    width: 100%;
+    background: var(--white);
+}
+
+.card .title {
+    font-size: 24px;
+}
+
+.card .text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+}
+
+.card .text .type {
+    font-size: 13px;
+    margin-top: 8px;
+    margin-left: 20px;
+}
+
+.card .text .cont {
+    width: 100%;
+    font-size: 2rem;
+    text-align: center;
+    padding: 5px 10px;
+    margin-top: 10px;
+}
+
+.card.location .text .cont {
+    color: var(--color17);
+}
+
+.card.timespan .text .cont {
+    color: var(--color9);
+}
+
+.card.parameters .text .cont {
+    color: var(--color15);
+}
+
+.card .other {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    color: var(--black);
+}
+
+.card .other .proj {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.card .other .svg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.paramDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 15px 40px;
+}
+
+.paramDiv .title {
+    width: 100%;
+    text-align: left;
+    font-size: 1.75rem;
+    font-weight: 300;
+}
+
+.paramDiv .params {
+    width: 100%;
+    padding: 20px 30px;
+}
+
+.paramDiv .params .param {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.paramDiv .params .param[status="closed"] > .expl {
+    display: none;
+}
+
+.paramDiv .params .param[status="opened"] > .expl {
+    display: block;
+}
+
+.paramDiv .params .param .title {
+    color: var(--black);
+    background: var(--white);
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 2px solid var(--lighter-sidebar-bg);
+}
+
+.paramDiv .params .param .title .first {
+    font-size: 18px;
+    width: 92%;
+}
+
+.paramDiv .params .param .expl {
+    width: 100%;
+    padding: 10px 20px;
+    color: var(--black);
+    font-size: 14px;
+}
+
+
+
+
+

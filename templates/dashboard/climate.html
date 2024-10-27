@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dash | Climate</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.0.min.css" type="text/css" />
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.0.min.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.6.0.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.6.0.min.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/colors.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/climate.css') }}">
+    {{ scriptESTemp|safe }}
+    {{ scriptSHum|safe }}
+    {{ scriptWDir|safe }}
+    {{ scriptSPres|safe }}
+</head>
+<body>
+    <nav class="sidebar opened">
+
+        <div class="logo_part">
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="30" height="30" viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve"><path d="M28.6,11.3V4.8c0-0.8-0.6-1.4-1.4-1.4h-6.5c-1.2,0-2.4,0.4-3.4,1c-0.5,0.3-0.9,0.7-1.3,1.2c-1.1-1.3-2.8-2.2-4.7-2.2H4.8  C4,3.4,3.4,4,3.4,4.8v6.5c0,1.9,0.9,3.5,2.2,4.7c-1.3,1.1-2.2,2.8-2.2,4.7v6.5c0,0.8,0.6,1.4,1.4,1.4h6.5c0.8,0,1.4-0.6,1.4-1.4  c0-0.8-0.6-1.4-1.4-1.4H6.2v-5.1c0-1.8,1.4-3.2,3.2-3.2h5.1v5.1c0,3.4,2.7,6.1,6.1,6.1h6.5c0.8,0,1.4-0.6,1.4-1.4v-6.5  c0-1.9-0.9-3.5-2.2-4.7C27.8,14.9,28.6,13.2,28.6,11.3z M9.5,14.6c-1.8,0-3.2-1.4-3.2-3.2V6.2h5.1c1.8,0,3.2,1.4,3.2,3.2v5.1H9.5z   M25.8,20.7v5.1h-5.1c-1.8,0-3.2-1.4-3.2-3.2v-5.1h5.1C24.3,17.4,25.8,18.9,25.8,20.7z M17.4,14.6V9.5c0-1.1,0.5-2.1,1.4-2.7  c0.5-0.4,1.2-0.6,1.8-0.6h5.1v5.1c0,1.8-1.4,3.2-3.2,3.2H17.4z" fill = "currentColor"/></svg>
+            </div>
+            <p class="logo_name">Acme</p>
+        </div>
+        <div class="pages">
+            <a href="/dashboard/home?lat={{rlat}}&lon={{rlon}}" class="item home" status="none">
+                <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg>
+                </div>
+                <div class="text">
+                    Home
+                </div>
+            </a>
+            <div class="item climate" list="closed" status="selected">
+                <div class="d">
+                    <a href="/dashboard/climate?lat={{rlat}}&lon={{rlon}}&key=data&cOneDays=30" class="link">
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M260-160q-91 0-155.5-63T40-377q0-78 47-139t123-78q25-92 100-149t170-57q117 0 198.5 81.5T760-520q69 8 114.5 59.5T920-340q0 75-52.5 127.5T740-160H260Zm0-80h480q42 0 71-29t29-71q0-42-29-71t-71-29h-60v-80q0-83-58.5-141.5T480-720q-83 0-141.5 58.5T280-520h-20q-58 0-99 41t-41 99q0 58 41 99t99 41Zm220-240Z"/></svg>
+                        </div>
+                        <div class="text">
+                            Climate
+                        </div>
+                    </a>
+                    <div class="chevron">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
+                    </div>
+                </div>
+                <div class="l">
+                    <a href="/dashboard/climate/evland?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
+                        Evaporation Land
+                    </a>
+                    <a href="/dashboard/climate/evptrns?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
+                        Evapotranspiration Energy Flux
+                    </a>
+                    <a href="/dashboard/climate/ws2m?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
+                        Wind Speed
+                    </a>
+                    <a href="/dashboard/climate/t2m?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
+                        Temperature
+                    </a>
+                    <a href="/dashboard/climate/ts?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
+                        Earth Skin Temperature
+                    </a>
+                    <a href="/dashboard/climate/qv2m?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
+                        Specific Humidity
+                    </a>
+                    <a href="/dashboard/climate/rh2m?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
+                        Relative Humidity
+                    </a>
+                    <a href="/dashboard/climate/ps?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
+                        Surface Pressure
+                    </a>
+                    <a href="/dashboard/climate/wd2m?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
+                        Wind Direction
+                    </a>
+                    <a href="/dashboard/climate/cloud_amt_day?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
+                        Cloud Amount at Daylight
+                    </a>
+                    <a href="/dashboard/climate/pw?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
+                        Precipitable Water
+                    </a>
+                    <a href="/dashboard/climate/t2mdew?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
+                        Dew Frost Temperature
+                    </a>
+                    <a href="/dashboard/climate/frostdays?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
+                        Frost Days
+                    </a>
+                    <a href="/dashboard/climate/prectotcorr?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
+                        Precipitation Corrected
+                    </a>
+                </div>
+            </div>
+            <div class="item soil" list="closed">
+                <div class="d">
+                    <a href="/dashboard/soil?lat={{rlat}}&lon={{rlon}}&key=data" class="link">
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-82v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q20-22 36-47.5t26.5-53q10.5-27.5 16-56.5t5.5-59q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z"/></svg>
+                        </div>
+                        <div class="text">
+                            Soil
+                        </div>
+                    </a>
+                    <div class="chevron">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
+                    </div>
+                </div>
+                <div class="l">
+                    <a href="/dashboard/soil/gwetprof?lat={{lat}}&lon={{lon}}&key=data" class="subitem">
+                        Profile Soil Moisture
+                    </a>
+                    <a href="/dashboard/soil/gwetroot?lat={{lat}}&lon={{lon}}&key=data" class="subitem">
+                        Root Zone Soil Wetness
+                    </a>
+                    <a href="/dashboard/soil/gwettop?lat={{lat}}&lon={{lon}}&key=data" class="subitem">
+                        Surface Soil Wetness
+                    </a>
+                    <a href="/dashboard/soil/zom?lat={{lat}}&lon={{lon}}&key=data" class="subitem">
+                        Surface Roughness
+                    </a>
+                </div>
+            </div>
+            <div class="item pollution" list="closed">
+                <div class="d">
+                    <a href="/dashboard/pollution={{lat}}&lon={{lon}}&key=data" class="link">
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M550-280q20 0 39-8t33-22l39-39-42-42-39 39q-6 6-14 8.5t-16 2.5q-8 0-16-2.5t-14-8.5l-38-38q-14-14-33-21.5t-39-7.5q-20 0-39 7.5T338-390l-39 39 42 42 39-39q6-6 14-8.5t16-2.5q8 0 16 2.5t14 8.5l38 38q14 14 33 22t39 8Zm0-120q20 0 39-8t33-22l39-39-42-42-39 39q-6 6-14 8.5t-16 2.5q-8 0-16-2.5t-14-8.5l-38-38q-14-14-33-21.5t-39-7.5q-20 0-39 7.5T338-510l-39 39 42 42 39-39q6-6 14-8.5t16-2.5q8 0 16 2.5t14 8.5l38 38q14 14 33 22t39 8Zm0-120q20 0 39-8t33-22l39-39-42-42-39 39q-6 6-14 8.5t-16 2.5q-8 0-16-2.5t-14-8.5l-38-38q-14-14-33-21.5t-39-7.5q-20 0-39 7.5T338-630l-39 39 42 42 39-39q6-6 14-8.5t16-2.5q8 0 16 2.5t14 8.5l38 38q14 14 33 22t39 8ZM160-160v-480l320-240 320 240v480H160Zm80-80h480v-360L480-780 240-600v360Zm240-270Z"/></svg>
+                        </div>
+                        <div class="text">
+                            Pollution
+                        </div>
+                    </a>
+                    <div class="chevron">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <section class="main">
+        <header class="header">
+            <div class="left">
+                <div class="menu_icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </div>
+                <p class="text">
+                    Hide taskbar
+                </p>
+            </div>
+        </header>
+        <section class="content">
+            <p class="crumblers"><span id="first">Dashboard</span><span>></span><span id="second">Climate</span></p>
+            <h3 class="title">Climate</h3>
+            <p class="intro">Today's Insights</p>
+            <div class="cards" id="first">
+                <div class="card temp">
+                    <p class="number">{{temp}}°C</p>
+                    <p class="title">Temperature</p>
+                    <div class="growth_icon">
+                        <div class="growth" comp="{{tempCmp}}">
+                            <div class="icons">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="up" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m280-400 200-200 200 200H280Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="straight" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M200-440v-80h560v80H200Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="down" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+                            </div>
+                            <p class="rate">{{tempRate}}%</p>
+                        </div>
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M520-520v-80h200v80H520Zm0-160v-80h320v80H520ZM320-120q-83 0-141.5-58.5T120-320q0-48 21-89.5t59-70.5v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q38 29 59 70.5t21 89.5q0 83-58.5 141.5T320-120ZM200-320h240q0-29-12.5-54T392-416l-32-24v-280q0-17-11.5-28.5T320-760q-17 0-28.5 11.5T280-720v280l-32 24q-23 17-35.5 42T200-320Z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="card rhum">
+                    <p class="number">{{rHumidity}}%</p>
+                    <p class="title">Relative Humidity</p>
+                    <div class="growth_icon">
+                        <div class="growth" comp="{{rHumidityCmp}}">
+                            <div class="icons">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="up" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m280-400 200-200 200 200H280Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="straight" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M200-440v-80h560v80H200Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="down" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+                            </div>
+                            <p class="rate">{{rHumidityRate}}%</p>
+                        </div>
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-100q-133 0-226.5-92T160-416q0-63 24.5-120.5T254-638l226-222 226 222q45 44 69.5 101.5T800-416q0 132-93.5 224T480-100ZM240-416h480q0-47-18-89.5T650-580L480-748 310-580q-34 32-52 74.5T240-416Z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="card precip">
+                    <p class="number">{{precipCorr}} mm/day</p>
+                    <p class="title">Precipitation</p>
+                    <div class="growth_icon">
+                        <div class="growth" comp="{{precipCorrCmp}}">
+                            <div class="icons">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="up" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m280-400 200-200 200 200H280Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="straight" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M200-440v-80h560v80H200Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="down" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+                            </div>
+                            <p class="rate">{{precipCorrRate}}%</p>
+                        </div>
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M558-84q-15 8-30.5 2.5T504-102l-60-120q-8-15-2.5-30.5T462-276q15-8 30.5-2.5T516-258l60 120q8 15 2.5 30.5T558-84Zm240 0q-15 8-30.5 2.5T744-102l-60-120q-8-15-2.5-30.5T702-276q15-8 30.5-2.5T756-258l60 120q8 15 2.5 30.5T798-84Zm-480 0q-15 8-30.5 2.5T264-102l-60-120q-8-15-2.5-30.5T222-276q15-8 30.5-2.5T276-258l60 120q8 15 2.5 30.5T318-84Zm-18-236q-91 0-155.5-64.5T80-540q0-83 55-145t136-73q32-57 87.5-89.5T480-880q90 0 156.5 57.5T717-679q69 6 116 57t47 122q0 75-52.5 127.5T700-320H300Zm0-80h400q42 0 71-29t29-71q0-42-29-71t-71-29h-60v-40q0-66-47-113t-113-47q-48 0-87.5 26T333-704l-10 24h-25q-57 2-97.5 42.5T160-540q0 58 41 99t99 41Zm180-200Z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="card wspeed">
+                    <p class="number">{{windSpeed}} m/s</p>
+                    <p class="title">Wind Speed</p>
+                    <div class="growth_icon">
+                        <div class="growth" comp="{{windSpeedCmp}}">
+                            <div class="icons">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="up" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m280-400 200-200 200 200H280Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="straight" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M200-440v-80h560v80H200Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="down" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+                            </div>
+                            <p class="rate">{{windSpeedRate}}%</p>
+                        </div>
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M400-40q0-33 23.5-56.5T480-120v-208q-12-5-22.5-11.5T438-354l-88 56q-14 8-30.5 10.5T286-290l-180-51q-29-8-47.5-32.5T40-429q0-38 26.5-64.5T131-520h301q10-11 22-19t26-13v-137q0-17 6.5-32t18.5-26l137-128q23-22 53.5-25t56.5 13q32 20 41.5 56.5T783-762L624-499q7 12 10.5 26t4.5 29l108 26q16 4 29 14t21 24l91 164q15 27 11 57t-26 52q-27 27-64.5 27T744-107L560-291v171q33 0 56.5 23.5T640-40H400ZM160-760v-80h240v80H160Zm400 71v137q1 0 1.5.5t1.5.5l152-253q2-4 1-8.5t-5-6.5q-3-2-7.5-1t-6.5 3L560-689ZM40-600v-80h200v80H40Zm480 200q17 0 28.5-11.5T560-440q0-17-11.5-28.5T520-480q-17 0-28.5 11.5T480-440q0 17 11.5 28.5T520-400Zm-211 34 93-56q-1-5-1-9v-9H131q-5 0-8 3t-3 8q0 4 2 7t6 4l181 52Zm419 25-114-26q-2 2-4 5t-4 5l195 194q3 3 8 3t8-3q3-3 3.5-6.5T819-177l-91-164ZM120-120v-80h200v80H120Zm400-320Zm43-111ZM401-440Zm205 83Z"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="intro">Global View</p>
+            <div class="cards" id="second">
+                <div class="card stats">
+                    <select name="selDays" id="selectdays" onchange="updateDays()">
+                        <option value="7">
+                            7 days
+                        </option>
+                        <option value="30" selected>
+                            30 days
+                        </option>
+                        <option value="90">
+                            90 days
+                        </option>
+                        <option value="360">
+                            360 days
+                        </option>
+                    </select>
+                    <table class="mtable">
+                        <thead class="cols">
+                            <tr class="big_head">
+                                <th class="head" id="parameter">Parameter</th>
+                                <th class="head" id="mean">Average</th>
+                                <th class="head" id="std">Std</th>
+                                <th class="head" id="min">Min</th>
+                                <th class="head" id="max">Max</th>
+                            </tr>
+                        </thead>
+                        <tbody class="cols">
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Evaporation Land</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanEvland}}">{{mEvland}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdEvland}}">{{stdEvland}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinEvland}}">{{minEvland}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxEvland}}">{{maxEvland}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Evapotranspiration Energy Flux</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanEvptrns}}">{{mEvptrns}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdEvptrns}}">{{stdEvptrns}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinEvptrns}}">{{minEvptrns}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxEvptrns}}">{{maxEvptrns}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Wind Speed</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanWs2m}}">{{mWs2m}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdWs2m}}">{{stdWs2m}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinWs2m}}">{{minWs2m}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxWs2m}}">{{maxWs2m}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Temperature</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanT2m}}">{{mT2m}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdT2m}}">{{stdT2m}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinT2m}}">{{minT2m}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxT2m}}">{{maxT2m}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Earth Skin Temperature</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanTs}}">{{mTs}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdTs}}">{{stdTs}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinTs}}">{{minTs}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxTs}}">{{maxTs}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Specific Humidity</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanQv2m}}">{{mQv2m}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdQv2m}}">{{stdQv2m}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinQv2m}}">{{minQv2m}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxQv2m}}">{{maxQv2m}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Relative Humidity</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanRh2m}}">{{mRh2m}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdRh2m}}">{{stdRh2m}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinRh2m}}">{{minRh2m}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxRh2m}}">{{maxRh2m}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Surface Pressure</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanPs}}">{{mPs}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdPs}}">{{stdPs}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinPs}}">{{minPs}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxPs}}">{{maxPs}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Wind Direction</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanWd2m}}">{{mWd2m}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdWd2m}}">{{stdWd2m}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinWd2m}}">{{minWd2m}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxWd2m}}">{{maxWd2m}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Cloud Amount at Daylight</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanCloudAmtDay}}">{{mCloudAmtDay}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdCloudAmtDay}}">{{stdCloudAmtDay}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinCloudAmtDay}}">{{minCloudAmtDay}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxCloudAmtDay}}">{{maxCloudAmtDay}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Precipitable Water</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanPw}}">{{mPw}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdPw}}">{{stdPw}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinPw}}">{{minPw}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxPw}}">{{maxPw}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Dew Frost Temperature</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanT2mDew}}">{{mT2mDew}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdT2mDew}}">{{stdT2mDew}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinT2mDew}}">{{minT2mDew}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxT2mDew}}">{{maxT2mDew}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Frost Days</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanForstDays}}">{{mForstDays}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdForstDays}}">{{stdForstDays}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinForstDays}}">{{minForstDays}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxForstDays}}">{{maxForstDays}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Precipitation Corrected</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanPrectotCorr}}">{{mPrectotCorr}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdPrectotCorr}}">{{stdPrectotCorr}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinPrectotCorr}}">{{minPrectotCorr}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxPrectotCorr}}">{{maxPrectotCorr}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card plots">
+                    <div class="subcard">
+                        <p class="title">Earth Skin Temperature</p>
+                        <div class="plot">
+                            {{ divESTemp|safe }}
+                        </div>
+                    </div>
+                    <div class="subcard">
+                        <p class="title">Specific Humidity</p>
+                        <div class="plot">
+                            {{ divSHum|safe }}
+                        </div>
+                    </div>
+                    <div class="subcard">
+                        <p class="title">Surface Pressure</p>
+                        <div class="plot">
+                            {{ divSPres|safe }}
+                        </div>
+                    </div>
+                    <div class="subcard">
+                        <p class="title">Wind Direction</p>
+                        <div class="plot">
+                            {{ divWDir|safe }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+    <script src="{{ url_for('static', filename='js/dash/climate.js') }}"></script>
+</body>
+</html>
