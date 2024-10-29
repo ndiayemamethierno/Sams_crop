@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dash | Climate | WS2M</title>
+    <title>Dash | Soil</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,15 +13,13 @@
     <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.0.min.js"></script>
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.6.0.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.6.0.min.js" crossorigin="anonymous"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/colors.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/climate.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/evland.css') }}">
-
-    {{ script|safe }}
-    {{ scriptFcst|safe }}
+    {{ scriptPSMois|safe }}
+    {{ scriptRZSW|safe }}
+    {{ scriptSSWet|safe }}
+    {{ scriptSRough|safe }}
 </head>
 <body>
     <nav class="sidebar opened">
@@ -41,7 +39,7 @@
                     Home
                 </div>
             </a>
-            <div class="item climate" list="closed" status="selected">
+            <div class="item climate" list="closed" status="none">
                 <div class="d">
                     <a href="/dashboard/climate?lat={{rlat}}&lon={{rlon}}&key=data&cOneDays=30" class="link">
                         <div class="icon">
@@ -100,9 +98,9 @@
                     </a>
                 </div>
             </div>
-            <div class="item soil" list="closed">
+            <div class="item soil" list="closed" status="selected">
                 <div class="d">
-                    <a href="/dashboard/soil?lat={{rlat}}&lon={{rlon}}&key=data" class="link">
+                    <a href="/dashboard/soil?lat={{rlat}}&lon={{rlon}}&key=data&cOneDays=30" class="link">
                         <div class="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-82v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q20-22 36-47.5t26.5-53q10.5-27.5 16-56.5t5.5-59q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z"/></svg>
                         </div>
@@ -131,7 +129,7 @@
             </div>
             <div class="item agri" list="closed">
                 <div class="d">
-                    <a href="#" class="link">
+                    <a href="/dashboard/agri?lat={{rlat}}&lon={{rlon}}&key=data&year=2020&tech=R&crop=whea&var=physicalArea" class="link">
                         <div class="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680h120q33 0 56.5 23.5T360-600H160Zm80 360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm540 0q25 0 42.5-17.5T840-300q0-25-17.5-42.5T780-360q-25 0-42.5 17.5T720-300q0 25 17.5 42.5T780-240Zm-540-60q-25 0-42.5-17.5T180-360q0-25 17.5-42.5T240-420q25 0 42.5 17.5T300-360q0 25-17.5 42.5T240-300Zm560-139q26 5 43 13.5t37 27.5v-242q0-33-23.5-56.5T800-720H548l-42-44 56-56-28-28-142 142 30 28 56-56 42 42v92q0 33-23.5 56.5T440-520h-81q23 17 37 35t28 45h16q66 0 113-47t47-113v-40h200v201ZM641-320q6-27 14.5-43.5T682-400H436q4 23 4 40t-4 40h205Zm139 160q-58 0-99-41t-41-99q0-58 41-99t99-41q58 0 99 41t41 99q0 58-41 99t-99 41Zm-540 0q-83 0-141.5-58.5T40-360q0-83 58.5-141.5T240-560q83 0 141.5 58.5T440-360q0 83-58.5 141.5T240-160Zm393-360Z"/></svg>
                         </div>
@@ -172,182 +170,167 @@
             </div>
         </header>
         <section class="content">
-            <p class="crumblers"><span id="first">Dashboard</span><span>></span><span id="second">Climate</span><span>></span><span id="third">WS2M</span></p>
-            <h3 class="title">Wind Speed</h3>
+            <p class="crumblers"><span id="first">Dashboard</span><span>></span><span id="second">Soil</span></p>
+            <h3 class="title">Soil</h3>
+            <p class="intro">Last Days Insights</p>
             <div class="cards" id="first">
-                <div class="card avg">
-                    <p class="title">Average</p>
-                    <p class="number">{{avg}}</p>
-                    <div class="other">
-                        <div class="icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-280h80v-200h-80v200Zm320 0h80v-400h-80v400Zm-160 0h80v-120h-80v120Zm0-200h80v-80h-80v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>
+                <div class="card temp">
+                    <p class="number">{{gwetprof}}</p>
+                    <p class="title">Profile Soil Moisture</p>
+                    <div class="growth_icon">
+                        <div class="growth" comp="{{gwetprofCmp}}">
+                            <div class="icons">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="up" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m280-400 200-200 200 200H280Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="straight" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M200-440v-80h560v80H200Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="down" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+                            </div>
+                            <p class="rate">{{gwetprofRate}}%</p>
                         </div>
-                        <p class="text">Entire Time Span</p>
-                    </div>
-                </div>
-                <div class="card min">
-                    <p class="title">Minimum</p>
-                    <p class="number">{{min}}</p>
-                    <div class="other">
                         <div class="icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
-                        </div>
-                        <div class="text">
-                            <p class="text">Encountered at</p>
-                            <p class="data">{{minDate}}</p>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M481-300q66 0 112.5-46T640-458q0-32-12-60.5T593-569L480-680 367-569q-23 22-35 50.5T320-458q0 66 47.5 112T481-300Zm-81-160q0-15 6-28t17-24l57-56 57 56q11 11 17 24t6 28H400ZM160-160v-480l320-240 320 240v480H160Zm80-80h480v-360L480-780 240-600v360Zm240-270Z"/></svg>
                         </div>
                     </div>
                 </div>
-                <div class="card max">
-                    <p class="title">Maximum</p>
-                    <p class="number">{{max}}</p>
-                    <div class="other">
-                        <div class="icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
+                <div class="card rhum">
+                    <p class="number">{{gwetroot}}</p>
+                    <p class="title">Root Zone Soil Wetness</p>
+                    <div class="growth_icon">
+                        <div class="growth" comp="{{gwetrootCmp}}">
+                            <div class="icons">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="up" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m280-400 200-200 200 200H280Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="straight" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M200-440v-80h560v80H200Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="down" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+                            </div>
+                            <p class="rate">{{gwetrootRate}}%</p>
                         </div>
-                        <div class="text">
-                            <p class="text">Encountered at</p>
-                            <p class="data">{{maxDate}}</p>
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-100q-133 0-226.5-92T160-416q0-63 24.5-120.5T254-638l226-222 226 222q45 44 69.5 101.5T800-416q0 132-93.5 224T480-100ZM240-416h480q0-47-18-89.5T650-580L480-748 310-580q-34 32-52 74.5T240-416Z"/></svg>
                         </div>
                     </div>
                 </div>
-                <div class="card corr">
-                    <p class="title">Correlation</p>
-                    <p class="number">{{corr}}</p>
+                <div class="card precip">
+                    <p class="number">{{gwettop}}</p>
+                    <p class="title">Surface Soil Wetness</p>
+                    <div class="growth_icon">
+                        <div class="growth" comp="{{gwettopCmp}}">
+                            <div class="icons">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="up" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m280-400 200-200 200 200H280Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="straight" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M200-440v-80h560v80H200Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="down" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+                            </div>
+                            <p class="rate">{{gwettopRate}}%</p>
+                        </div>
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M558-84q-15 8-30.5 2.5T504-102l-60-120q-8-15-2.5-30.5T462-276q15-8 30.5-2.5T516-258l60 120q8 15 2.5 30.5T558-84Zm240 0q-15 8-30.5 2.5T744-102l-60-120q-8-15-2.5-30.5T702-276q15-8 30.5-2.5T756-258l60 120q8 15 2.5 30.5T798-84Zm-480 0q-15 8-30.5 2.5T264-102l-60-120q-8-15-2.5-30.5T222-276q15-8 30.5-2.5T276-258l60 120q8 15 2.5 30.5T318-84Zm-18-236q-91 0-155.5-64.5T80-540q0-83 55-145t136-73q32-57 87.5-89.5T480-880q90 0 156.5 57.5T717-679q69 6 116 57t47 122q0 75-52.5 127.5T700-320H300Zm0-80h400q42 0 71-29t29-71q0-42-29-71t-71-29h-60v-40q0-66-47-113t-113-47q-48 0-87.5 26T333-704l-10 24h-25q-57 2-97.5 42.5T160-540q0 58 41 99t99 41Zm180-200Z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="card wspeed">
+                    <p class="number">{{zom}} m</p>
+                    <p class="title">Surface Roughness</p>
+                    <div class="growth_icon">
+                        <div class="growth" comp="{{zomCmp}}">
+                            <div class="icons">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="up" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m280-400 200-200 200 200H280Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="straight" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M200-440v-80h560v80H200Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="down" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+                            </div>
+                            <p class="rate">{{zomRate}}%</p>
+                        </div>
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M550-280q20 0 39-8t33-22l39-39-42-42-39 39q-6 6-14 8.5t-16 2.5q-8 0-16-2.5t-14-8.5l-38-38q-14-14-33-21.5t-39-7.5q-20 0-39 7.5T338-390l-39 39 42 42 39-39q6-6 14-8.5t16-2.5q8 0 16 2.5t14 8.5l38 38q14 14 33 22t39 8Zm0-120q20 0 39-8t33-22l39-39-42-42-39 39q-6 6-14 8.5t-16 2.5q-8 0-16-2.5t-14-8.5l-38-38q-14-14-33-21.5t-39-7.5q-20 0-39 7.5T338-510l-39 39 42 42 39-39q6-6 14-8.5t16-2.5q8 0 16 2.5t14 8.5l38 38q14 14 33 22t39 8Zm0-120q20 0 39-8t33-22l39-39-42-42-39 39q-6 6-14 8.5t-16 2.5q-8 0-16-2.5t-14-8.5l-38-38q-14-14-33-21.5t-39-7.5q-20 0-39 7.5T338-630l-39 39 42 42 39-39q6-6 14-8.5t16-2.5q8 0 16 2.5t14 8.5l38 38q14 14 33 22t39 8ZM160-160v-480l320-240 320 240v480H160Zm80-80h480v-360L480-780 240-600v360Zm240-270Z"/></svg>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <p class="intro">Global View</p>
             <div class="cards" id="second">
-                <div class="card">
-                    <div class="item yearspan">
-                        <p class="text">Year Span</p>
-                        <div class="selects">
-                            <div class="item start">
-                                <p class="text">Start</p>
-                                <select name="selStart" id="selectStart" class="select" onchange="">
-                                    <option value="1995" selected>1995</option>
-                                    <option value="1996">1996</option>
-                                    <option value="1997">1997</option>
-                                    <option value="1998">1998</option>
-                                    <option value="1999">1999</option>
-                                    <option value="2000">2000</option>
-                                    <option value="2001">2001</option>
-                                    <option value="2002">2002</option>
-                                    <option value="2003">2003</option>
-                                    <option value="2004">2004</option>
-                                    <option value="2005">2005</option>
-                                    <option value="2006">2006</option>
-                                    <option value="2007">2007</option>
-                                    <option value="2008">2008</option>
-                                    <option value="2009">2009</option>
-                                    <option value="2010">2010</option>
-                                    <option value="2011">2011</option>
-                                    <option value="2012">2012</option>
-                                    <option value="2013">2013</option>
-                                    <option value="2014">2014</option>
-                                    <option value="2015">2015</option>
-                                    <option value="2016">2016</option>
-                                    <option value="2017">2017</option>
-                                    <option value="2018">2018</option>
-                                    <option value="2019">2019</option>
-                                    <option value="2020">2020</option>
-                                    <option value="2021">2021</option>
-                                    <option value="2022">2022</option>
-                                    <option value="2023">2023</option>
-                                    <option value="2024">2024</option>
-                                </select>
-                            </div>
-                            <div class="item end">
-                                <p class="text">End</p>
-                                <select name="selEnd" id="selectEnd" class="select" onchange="">
-                                    <option value="1995">1995</option>
-                                    <option value="1996">1996</option>
-                                    <option value="1997">1997</option>
-                                    <option value="1998">1998</option>
-                                    <option value="1999">1999</option>
-                                    <option value="2000">2000</option>
-                                    <option value="2001">2001</option>
-                                    <option value="2002">2002</option>
-                                    <option value="2003">2003</option>
-                                    <option value="2004">2004</option>
-                                    <option value="2005">2005</option>
-                                    <option value="2006">2006</option>
-                                    <option value="2007">2007</option>
-                                    <option value="2008">2008</option>
-                                    <option value="2009">2009</option>
-                                    <option value="2010">2010</option>
-                                    <option value="2011">2011</option>
-                                    <option value="2012">2012</option>
-                                    <option value="2013">2013</option>
-                                    <option value="2014">2014</option>
-                                    <option value="2015">2015</option>
-                                    <option value="2016">2016</option>
-                                    <option value="2017">2017</option>
-                                    <option value="2018">2018</option>
-                                    <option value="2019">2019</option>
-                                    <option value="2020">2020</option>
-                                    <option value="2021">2021</option>
-                                    <option value="2022">2022</option>
-                                    <option value="2023">2023</option>
-                                    <option value="2024" selected>2024</option>
-                                </select>
-                            </div>
+                <div class="card stats" style="height: 350px;">
+                    <select name="selDays" id="selectdays" onchange="updateDays()">
+                        <option value="7">
+                            7 days
+                        </option>
+                        <option value="30" selected>
+                            30 days
+                        </option>
+                        <option value="90">
+                            90 days
+                        </option>
+                        <option value="360">
+                            360 days
+                        </option>
+                    </select>
+                    <table class="mtable">
+                        <thead class="cols">
+                            <tr class="big_head">
+                                <th class="head" id="parameter">Parameter</th>
+                                <th class="head" id="mean">Average</th>
+                                <th class="head" id="std">Std</th>
+                                <th class="head" id="min">Min</th>
+                                <th class="head" id="max">Max</th>
+                            </tr>
+                        </thead>
+                        <tbody class="cols">
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Profile Soil Moisture</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanGwetprof}}">{{mGwetprof}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdGwetprof}}">{{stdGwetprof}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinGwetprof}}">{{minGwetprof}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxGwetprof}}">{{maxGwetprof}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Root Zone Soil Wetness</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanGwetroot}}">{{mGwetroot}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdGwetroot}}">{{stdGwetroot}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinGwetroot}}">{{minGwetroot}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxGwetroot}}">{{maxGwetroot}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Surface Soil Wetness</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanGwettop}}">{{mGwettop}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdGwettop}}">{{stdGwettop}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinGwettop}}">{{minGwettop}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxGwettop}}">{{maxGwettop}}</td>
+                            </tr>
+                            <tr class="big_contents">
+                                <td class="contents" id="parameter">Surface Roughness</td>
+                                <td class="contents" id="mean" comp="{{cmpMeanZom}}">{{mZom}}</td>
+                                <td class="contents" id="std" comp="{{cmpStdZom}}">{{stdZom}}</td>
+                                <td class="contents" id="min" comp="{{cmpMinZom}}">{{minZom}}</td>
+                                <td class="contents" id="max" comp="{{cmpMaxZom}}">{{maxZom}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card plots">
+                    <div class="subcard">
+                        <p class="title">Profile Soil Moisture</p>
+                        <div class="plot">
+                            {{ divPSMois|safe }}
                         </div>
                     </div>
-                    <div class="item groupFunc">
-                        <p class="text">Group By</p>
-                        <select name="selGroupBy" id="selectGroupBy" class="select">
-                            <option value="default" selected>Default</option>
-                            <option value="M">Monthly</option>
-                            <option value="Y">Yearly</option>
-                            <option value="MY">Monthly & Yearly</option>
-                        </select>
-                    </div>
-                    <div class="item plotType">
-                        <p class="text">Plot Type</p>
-                        <select name="selPlotType" id="selectPlotType" class="select">
-                            <option value="line">Line</option>
-                            <option value="scatter" selected>Scatter</option>
-                        </select>
-                    </div>
-                    <button type="button" onclick="update()">Submit</button>
-                </div>
-                <div class="card">
-                    <div class="first">
-                        <p class="text">Graph</p>
-                        <div class="svg">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M160-160v-320h160v320H160Zm240 0v-640h160v640H400Zm240 0v-440h160v440H640Z"/></svg>
+                    <div class="subcard">
+                        <p class="title">Root Zone Soil Wetness</p>
+                        <div class="plot">
+                            {{ divRZSW|safe }}
                         </div>
                     </div>
-                    {{ div|safe }}
-                </div>
-            </div>
-            <p class="intro">{{fcstDays}} Days Forecasts</p>
-            <div class="cards" id="third">
-                <div class="subcards">
-                    <div class="subcard" id="graph">
-                        <select name="selDays" id="selectdays" onchange="updateDays()">
-                            <option value="30">
-                                30 days
-                            </option>
-                            <option value="90" selected>
-                                90 days
-                            </option>
-                            <option value="180">
-                                180 days
-                            </option>
-                            <option value="360">
-                                360 days
-                            </option>
-                        </select>
-                        {{ divFcst|safe }}
+                    <div class="subcard">
+                        <p class="title">Surface Soil Wetness</p>
+                        <div class="plot">
+                            {{ divSSWet|safe }}
+                        </div>
                     </div>
-                    <div class="subcard" id="table">
-                        {{ table | safe }}
+                    <div class="subcard">
+                        <p class="title">Surface Roughness</p>
+                        <div class="plot">
+                            {{ divSRough|safe }}
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </section>
-    <script src="{{ url_for('static', filename='js/dash/climate/evland.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dash/climate.js') }}"></script>
 </body>
 </html>

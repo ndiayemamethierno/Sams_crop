@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dash | Climate | WS2M</title>
+    <title>Dash | Agri | Production</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,19 +13,15 @@
     <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.0.min.js"></script>
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.6.0.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.6.0.min.js" crossorigin="anonymous"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/dark/main.css">
+    <script src="https://js.arcgis.com/4.26/"></script>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/colors.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/climate.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/evland.css') }}">
-
-    {{ script|safe }}
-    {{ scriptFcst|safe }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/parea.css') }}">
 </head>
 <body>
     <nav class="sidebar opened">
-
         <div class="logo_part">
             <div class="logo">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="30" height="30" viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve"><path d="M28.6,11.3V4.8c0-0.8-0.6-1.4-1.4-1.4h-6.5c-1.2,0-2.4,0.4-3.4,1c-0.5,0.3-0.9,0.7-1.3,1.2c-1.1-1.3-2.8-2.2-4.7-2.2H4.8  C4,3.4,3.4,4,3.4,4.8v6.5c0,1.9,0.9,3.5,2.2,4.7c-1.3,1.1-2.2,2.8-2.2,4.7v6.5c0,0.8,0.6,1.4,1.4,1.4h6.5c0.8,0,1.4-0.6,1.4-1.4  c0-0.8-0.6-1.4-1.4-1.4H6.2v-5.1c0-1.8,1.4-3.2,3.2-3.2h5.1v5.1c0,3.4,2.7,6.1,6.1,6.1h6.5c0.8,0,1.4-0.6,1.4-1.4v-6.5  c0-1.9-0.9-3.5-2.2-4.7C27.8,14.9,28.6,13.2,28.6,11.3z M9.5,14.6c-1.8,0-3.2-1.4-3.2-3.2V6.2h5.1c1.8,0,3.2,1.4,3.2,3.2v5.1H9.5z   M25.8,20.7v5.1h-5.1c-1.8,0-3.2-1.4-3.2-3.2v-5.1h5.1C24.3,17.4,25.8,18.9,25.8,20.7z M17.4,14.6V9.5c0-1.1,0.5-2.1,1.4-2.7  c0.5-0.4,1.2-0.6,1.8-0.6h5.1v5.1c0,1.8-1.4,3.2-3.2,3.2H17.4z" fill = "currentColor"/></svg>
@@ -41,7 +37,7 @@
                     Home
                 </div>
             </a>
-            <div class="item climate" list="closed" status="selected">
+            <div class="item climate" list="closed" status="none">
                 <div class="d">
                     <a href="/dashboard/climate?lat={{rlat}}&lon={{rlon}}&key=data&cOneDays=30" class="link">
                         <div class="icon">
@@ -129,7 +125,7 @@
                     </a>
                 </div>
             </div>
-            <div class="item agri" list="closed">
+            <div class="item agri" list="closed" status="selected">
                 <div class="d">
                     <a href="#" class="link">
                         <div class="icon">
@@ -156,6 +152,9 @@
                     <a href="/dashboard/agri/yield?lat={{rlat}}&lon={{rlon}}&key=data&year=2020&tech=R&crop=whea" class="subitem">
                         Yields
                     </a>
+                    <a href="/dashboard/agri/map?lat={{rlat}}&lon={{rlon}}&key=data&year=2020&tech=R&crop=whea" class="subitem">
+                        Map
+                    </a>
                 </div>
             </div>
         </div>
@@ -172,182 +171,230 @@
             </div>
         </header>
         <section class="content">
-            <p class="crumblers"><span id="first">Dashboard</span><span>></span><span id="second">Climate</span><span>></span><span id="third">WS2M</span></p>
-            <h3 class="title">Wind Speed</h3>
-            <div class="cards" id="first">
-                <div class="card avg">
-                    <p class="title">Average</p>
-                    <p class="number">{{avg}}</p>
-                    <div class="other">
-                        <div class="icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-280h80v-200h-80v200Zm320 0h80v-400h-80v400Zm-160 0h80v-120h-80v120Zm0-200h80v-80h-80v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>
-                        </div>
-                        <p class="text">Entire Time Span</p>
-                    </div>
+            <div class="tasks">
+                <p class="text">MapDash</p>
+                <div class="dashexp">
+                    <p class="text">Year</p>
+                    <select name="selYear" id="selectYear" class="year">
+                        <option value="2010" selected>2010</option>
+                        <option value="2020">2020</option>
+                    </select>
+                    <p class="text">Technology</p>
+                    <select name="selTech" id="selectTech" class="tech">
+                        <option value="A">All Techs</option>
+                        <option value="I">Irrigated</option>
+                        <option value="R"selected>Rainfed</option>
+                    </select>
+                    <p class="text">Crops</p>
+                    <select name="selCul" id="selectCul" class="cul">
+                        <optgroup label="Food Crops">
+                            <option value="whea" selected>Wheat</option>
+                            <option value="rice">Rice</option>
+                            <option value="maiz">Maize</option>
+                            <option value="barl">Barley</option>
+                            <option value="pmil">Pearl Millet</option>
+                            <option value="smil">Small Millet</option>
+                            <option value="sorg">Sorghum</option>
+                            <option value="ocer">Other Cereals</option>
+                            <option value="pota">Potato</option>
+                            <option value="swpo">Sweet Potato</option>
+                            <option value="yams">Yams</option>
+                            <option value="cass">Cassava</option>
+                            <option value="orts">Other Roots</option>
+                            <option value="bean">Bean</option>
+                            <option value="chic">Chickpea</option>
+                            <option value="cowp">Cowpea</option>
+                            <option value="pige">Pigeonpea</option>
+                            <option value="lent">Lentil</option>
+                            <option value="opul">Other Pulses</option>
+                            <option value="soyb">Soybean</option>
+                            <option value="grou">Groundnut</option>
+                            <option value="cnut">Coconut</option>
+                            <option value="bana">Banana</option>
+                            <option value="plnt">Plantain</option>
+                            <option value="trof">Tropical Fruit</option>
+                            <option value="temf">Temperate Fruit</option>
+                            <option value="vege">Vegetables</option>
+                        </optgroup>
+                    
+                        <!-- Non-Food Crops -->
+                        <optgroup label="Non-Food Crops">
+                            <option value="oilp">Oil Palm</option>
+                            <option value="sunf">Sunflower</option>
+                            <option value="rape">Rapeseed</option>
+                            <option value="sesa">Sesame Seed</option>
+                            <option value="ooil">Other Oil Crops</option>
+                            <option value="sugc">Sugarcane</option>
+                            <option value="sugb">Sugarbeet</option>
+                            <option value="cott">Cotton</option>
+                            <option value="ofib">Other Fibre Crops</option>
+                            <option value="acof">Arabica Coffee</option>
+                            <option value="rcof">Robusta Coffee</option>
+                            <option value="coco">Cocoa</option>
+                            <option value="teas">Tea</option>
+                            <option value="toba">Tobacco</option>
+                            <option value="rest">Rest of Crops</option>
+                        </optgroup>
+                    </select>
                 </div>
-                <div class="card min">
-                    <p class="title">Minimum</p>
-                    <p class="number">{{min}}</p>
-                    <div class="other">
-                        <div class="icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
-                        </div>
-                        <div class="text">
-                            <p class="text">Encountered at</p>
-                            <p class="data">{{minDate}}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card max">
-                    <p class="title">Maximum</p>
-                    <p class="number">{{max}}</p>
-                    <div class="other">
-                        <div class="icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
-                        </div>
-                        <div class="text">
-                            <p class="text">Encountered at</p>
-                            <p class="data">{{maxDate}}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card corr">
-                    <p class="title">Correlation</p>
-                    <p class="number">{{corr}}</p>
-                </div>
+                <button type="button" onclick="update()">Submit</button>
             </div>
-            <div class="cards" id="second">
-                <div class="card">
-                    <div class="item yearspan">
-                        <p class="text">Year Span</p>
-                        <div class="selects">
-                            <div class="item start">
-                                <p class="text">Start</p>
-                                <select name="selStart" id="selectStart" class="select" onchange="">
-                                    <option value="1995" selected>1995</option>
-                                    <option value="1996">1996</option>
-                                    <option value="1997">1997</option>
-                                    <option value="1998">1998</option>
-                                    <option value="1999">1999</option>
-                                    <option value="2000">2000</option>
-                                    <option value="2001">2001</option>
-                                    <option value="2002">2002</option>
-                                    <option value="2003">2003</option>
-                                    <option value="2004">2004</option>
-                                    <option value="2005">2005</option>
-                                    <option value="2006">2006</option>
-                                    <option value="2007">2007</option>
-                                    <option value="2008">2008</option>
-                                    <option value="2009">2009</option>
-                                    <option value="2010">2010</option>
-                                    <option value="2011">2011</option>
-                                    <option value="2012">2012</option>
-                                    <option value="2013">2013</option>
-                                    <option value="2014">2014</option>
-                                    <option value="2015">2015</option>
-                                    <option value="2016">2016</option>
-                                    <option value="2017">2017</option>
-                                    <option value="2018">2018</option>
-                                    <option value="2019">2019</option>
-                                    <option value="2020">2020</option>
-                                    <option value="2021">2021</option>
-                                    <option value="2022">2022</option>
-                                    <option value="2023">2023</option>
-                                    <option value="2024">2024</option>
-                                </select>
-                            </div>
-                            <div class="item end">
-                                <p class="text">End</p>
-                                <select name="selEnd" id="selectEnd" class="select" onchange="">
-                                    <option value="1995">1995</option>
-                                    <option value="1996">1996</option>
-                                    <option value="1997">1997</option>
-                                    <option value="1998">1998</option>
-                                    <option value="1999">1999</option>
-                                    <option value="2000">2000</option>
-                                    <option value="2001">2001</option>
-                                    <option value="2002">2002</option>
-                                    <option value="2003">2003</option>
-                                    <option value="2004">2004</option>
-                                    <option value="2005">2005</option>
-                                    <option value="2006">2006</option>
-                                    <option value="2007">2007</option>
-                                    <option value="2008">2008</option>
-                                    <option value="2009">2009</option>
-                                    <option value="2010">2010</option>
-                                    <option value="2011">2011</option>
-                                    <option value="2012">2012</option>
-                                    <option value="2013">2013</option>
-                                    <option value="2014">2014</option>
-                                    <option value="2015">2015</option>
-                                    <option value="2016">2016</option>
-                                    <option value="2017">2017</option>
-                                    <option value="2018">2018</option>
-                                    <option value="2019">2019</option>
-                                    <option value="2020">2020</option>
-                                    <option value="2021">2021</option>
-                                    <option value="2022">2022</option>
-                                    <option value="2023">2023</option>
-                                    <option value="2024" selected>2024</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item groupFunc">
-                        <p class="text">Group By</p>
-                        <select name="selGroupBy" id="selectGroupBy" class="select">
-                            <option value="default" selected>Default</option>
-                            <option value="M">Monthly</option>
-                            <option value="Y">Yearly</option>
-                            <option value="MY">Monthly & Yearly</option>
-                        </select>
-                    </div>
-                    <div class="item plotType">
-                        <p class="text">Plot Type</p>
-                        <select name="selPlotType" id="selectPlotType" class="select">
-                            <option value="line">Line</option>
-                            <option value="scatter" selected>Scatter</option>
-                        </select>
-                    </div>
-                    <button type="button" onclick="update()">Submit</button>
-                </div>
-                <div class="card">
-                    <div class="first">
-                        <p class="text">Graph</p>
-                        <div class="svg">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M160-160v-320h160v320H160Zm240 0v-640h160v640H400Zm240 0v-440h160v440H640Z"/></svg>
-                        </div>
-                    </div>
-                    {{ div|safe }}
-                </div>
-            </div>
-            <p class="intro">{{fcstDays}} Days Forecasts</p>
-            <div class="cards" id="third">
-                <div class="subcards">
-                    <div class="subcard" id="graph">
-                        <select name="selDays" id="selectdays" onchange="updateDays()">
-                            <option value="30">
-                                30 days
-                            </option>
-                            <option value="90" selected>
-                                90 days
-                            </option>
-                            <option value="180">
-                                180 days
-                            </option>
-                            <option value="360">
-                                360 days
-                            </option>
-                        </select>
-                        {{ divFcst|safe }}
-                    </div>
-                    <div class="subcard" id="table">
-                        {{ table | safe }}
-                    </div>
-                </div>
-            </div>
+            <div id="viewDiv"></div>
         </section>
     </section>
-    <script src="{{ url_for('static', filename='js/dash/climate/evland.js') }}"></script>
+    <script>
+        function getColor(value, maxValue) {
+            if (value === 0) return "rgba(255, 255, 102, 0)";
+
+            const ratio = value / maxValue;
+            const red = Math.round(255 * ratio);
+            const green = Math.round(255 * (1 - ratio) + 255 * (1 - ratio) * 0.5);
+            return `rgb(${red}, ${green}, 0)`;
+        }
+
+        require([
+            "esri/Map", 
+            "esri/views/MapView",
+            "esri/widgets/Search",
+            "esri/widgets/ScaleBar",
+            "esri/Graphic",
+            "esri/layers/GraphicsLayer",
+            "esri/symbols/SimpleMarkerSymbol",
+            "esri/renderers/HeatmapRenderer"
+        ], function(Map, MapView, Search, ScaleBar, Graphic, GraphicsLayer, SimpleMarkerSymbol, HeatmapRenderer) {
+
+            var map = new Map({
+                basemap: "streets-night-vector"
+            });
+
+            var lat = {{ rlat | tojson }};
+            var lon = {{ rlon | tojson }};
+            const cropData = {{ crops|tojson }};
+
+            var view = new MapView({
+                container: "viewDiv",
+                map: map,
+                center: [lon, lat],
+                zoom: 3,
+                minZoom: 2
+            });
+
+            var search = new Search({
+                view: view
+            });
+            view.ui.add(search, "top-right");
+            view.constraints.minZoom = 2
+
+            var scaleBar = new ScaleBar({
+                view: view
+            });
+            view.ui.add(scaleBar, "bottom-left");
+
+            var markerSymbol = {
+                type: "simple-marker",
+                color: "#fdcd0d",
+                size: "16px",
+                outline: {
+                    color: "black",
+                    width: 0
+                }
+            };
+
+            var point = {
+                type: "point",
+                longitude: lon,
+                latitude: lat
+            };
+
+            var pointGraphic = new Graphic({
+                geometry: point,
+                symbol: markerSymbol
+            });
+
+            view.graphics.add(pointGraphic);
+            const maxCropValue = Math.max(...cropData.map(crop => crop.crop));
+            cropData.forEach(crop => {
+                const color = getColor(crop.crop, maxCropValue);
+                const point = {
+                    type: "point",
+                    longitude: crop.x,
+                    latitude: crop.y
+                };
+                const markerSymbol = {
+                    type: "simple-marker",
+                    color: color,
+                    size: `${Math.log(crop.crop)*1.5 + 1}px`,
+                    outline: {
+                        color: "white",
+                        width: 0
+                    }
+                };
+
+                const squarePolygon = {
+                    type: "polygon",
+                    rings: [
+                        [crop.x - 0.041666666666666667, crop.y - 0.041666666666666667], // Bottom-left corner
+                        [crop.x - 0.041666666666666667, crop.y + 0.041666666666666667], // Top-left corner
+                        [crop.x + 0.041666666666666667, crop.y + 0.041666666666666667], // Top-right corner
+                        [crop.x + 0.041666666666666667, crop.y - 0.041666666666666667], // Bottom-right corner
+                        [crop.x - 0.041666666666666667, crop.y - 0.041666666666666667]  // Close the polygon
+                    ]
+                };
+
+                const squareSymbol = {
+                    type: "simple-fill",
+                    color: color,
+                    style: "solid",
+                    outline: {
+                        color: "black",
+                        width: 0
+                    }
+                };
+
+                const squareGraphic = new Graphic({
+                    geometry: squarePolygon,
+                    symbol: squareSymbol
+                });
+                view.graphics.add(squareGraphic);
+
+                const popupTemplate = {
+                    title: "Crop Information",
+                    content: `
+                        <b>Location:</b> ${crop.y}, ${crop.x}<br>
+                        <b>Crop Yield:</b> ${crop.crop} units
+                    `
+                };
+
+                const pointGraphic = new Graphic({
+                    geometry: point,
+                    symbol: markerSymbol,
+                    popupTemplate: popupTemplate
+                });
+
+                //view.graphics.add(pointGraphic);
+                
+            });
+            view.on("click", function(event) {
+                view.hitTest(event).then(function(response) {
+                    if (response.results.length) {
+                        const graphic = response.results[0].graphic;
+                        // Show the popup if the graphic has a popup template
+                        if (graphic.popupTemplate) {
+                            view.popup.open({
+                                title: graphic.popupTemplate.title,
+                                content: graphic.popupTemplate.content,
+                                location: event.mapPoint // Location of the popup
+                            });
+                        }
+                    }
+                });
+            });
+        }); 
+    </script>
+    <script src="{{ url_for('static', filename='js/dash/agri/parea.js') }}"></script>
 </body>
 </html>
+
+
+
+

@@ -9,7 +9,7 @@ from bokeh.models import ColumnDataSource, HoverTool
 from scipy.stats import linregress
 
 from extern.dash.dt import dtmaker
-from extern.dash.clim.params import stat as s
+from extern.dash.params import stat as s
 
 def plotStyle(x_axis_type: str = "datetime"):
     p = figure(x_axis_type=x_axis_type, sizing_mode='stretch_both')

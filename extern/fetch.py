@@ -38,7 +38,7 @@ param = [
     'GWETROOT', # Root Zone Soil Wetness
     'GWETTOP', # Surface Soil Wetness
     'PRECTOTCORR', # Precipitation Corrected
-    'Z0M' #Surface Roughness
+    'Z0M' # Surface Roughness
 ]
 
 params = ','.join(param[:])
@@ -81,7 +81,7 @@ def getCountryFromPoint(lat: float, lon: float, year: str):
     if year == "2010":
         return country["iso3"].iloc[0]
     else:
-        return country["iso_3166_1_"].iloc[0]
+        return [country["iso_3166_1_"].iloc[0], country["name"].iloc[0]]
 
 
 urlS3 = "https://sams-s3.s3.us-east-1.amazonaws.com/{}"

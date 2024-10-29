@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dash | Agri | Map</title>
+    <title>Dash | Agri | Parea</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -111,23 +111,23 @@
                     </div>
                 </div>
                 <div class="l">
-                    <a href="/dashboard/soil/gwetprof?lat={{lat}}&lon={{lon}}&key=data" class="subitem">
+                    <a href="/dashboard/soil/gwetprof?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
                         Profile Soil Moisture
                     </a>
-                    <a href="/dashboard/soil/gwetroot?lat={{lat}}&lon={{lon}}&key=data" class="subitem">
+                    <a href="/dashboard/soil/gwetroot?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
                         Root Zone Soil Wetness
                     </a>
-                    <a href="/dashboard/soil/gwettop?lat={{lat}}&lon={{lon}}&key=data" class="subitem">
+                    <a href="/dashboard/soil/gwettop?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
                         Surface Soil Wetness
                     </a>
-                    <a href="/dashboard/soil/zom?lat={{lat}}&lon={{lon}}&key=data" class="subitem">
+                    <a href="/dashboard/soil/zom?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
                         Surface Roughness
                     </a>
                 </div>
             </div>
             <div class="item agri" list="closed" status="selected">
                 <div class="d">
-                    <a href="/dashboard/agri={{rlat}}&lon={{rlon}}&key=data" class="link">
+                    <a href="#" class="link">
                         <div class="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680h120q33 0 56.5 23.5T360-600H160Zm80 360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm540 0q25 0 42.5-17.5T840-300q0-25-17.5-42.5T780-360q-25 0-42.5 17.5T720-300q0 25 17.5 42.5T780-240Zm-540-60q-25 0-42.5-17.5T180-360q0-25 17.5-42.5T240-420q25 0 42.5 17.5T300-360q0 25-17.5 42.5T240-300Zm560-139q26 5 43 13.5t37 27.5v-242q0-33-23.5-56.5T800-720H548l-42-44 56-56-28-28-142 142 30 28 56-56 42 42v92q0 33-23.5 56.5T440-520h-81q23 17 37 35t28 45h16q66 0 113-47t47-113v-40h200v201ZM641-320q6-27 14.5-43.5T682-400H436q4 23 4 40t-4 40h205Zm139 160q-58 0-99-41t-41-99q0-58 41-99t99-41q58 0 99 41t41 99q0 58-41 99t-99 41Zm-540 0q-83 0-141.5-58.5T40-360q0-83 58.5-141.5T240-560q83 0 141.5 58.5T440-360q0 83-58.5 141.5T240-160Zm393-360Z"/></svg>
                         </div>
@@ -176,8 +176,8 @@
                 <div class="dashexp">
                     <p class="text">Year</p>
                     <select name="selYear" id="selectYear" class="year">
-                        <option value="2010">2010</option>
-                        <option value="2020"selected>2020</option>
+                        <option value="2010" selected>2010</option>
+                        <option value="2020">2020</option>
                     </select>
                     <p class="text">Technology</p>
                     <select name="selTech" id="selectTech" class="tech">
@@ -186,7 +186,7 @@
                         <option value="R"selected>Rainfed</option>
                     </select>
                     <p class="text">Crops</p>
-                    <select multiple name="selCul" id="selectCul" class="cul" size="10">
+                    <select name="selCul" id="selectCul" class="cul">
                         <optgroup label="Food Crops">
                             <option value="whea" selected>Wheat</option>
                             <option value="rice">Rice</option>
@@ -243,61 +243,60 @@
         </section>
     </section>
     <script>
+        function getColor(value, maxValue) {
+            if (value === 0) return "rgba(255, 255, 102, 0)";
+
+            const ratio = value / maxValue;
+            const red = Math.round(255 * ratio);
+            const green = Math.round(255 * (1 - ratio) + 255 * (1 - ratio) * 0.5);
+            return `rgb(${red}, ${green}, 0)`;
+        }
+
         require([
             "esri/Map", 
             "esri/views/MapView",
             "esri/widgets/Search",
             "esri/widgets/ScaleBar",
-            "esri/layers/FeatureLayer",
             "esri/Graphic",
             "esri/layers/GraphicsLayer",
-            "esri/symbols/SimpleMarkerSymbol"
-        ], function(Map, MapView, Search, ScaleBar, FeatureLayer, Graphic, GraphicsLayer, SimpleMarkerSymbol) {
+            "esri/symbols/SimpleMarkerSymbol",
+            "esri/renderers/HeatmapRenderer"
+        ], function(Map, MapView, Search, ScaleBar, Graphic, GraphicsLayer, SimpleMarkerSymbol, HeatmapRenderer) {
 
-            // Initialize the map
             var map = new Map({
-                basemap: "streets-night-vector" // Choose a basemap
+                basemap: "streets-night-vector"
             });
 
             var lat = {{ rlat | tojson }};
             var lon = {{ rlon | tojson }};
             const cropData = {{ crops|tojson }};
 
-            // Set up the map view
             var view = new MapView({
-                container: "viewDiv", // Reference to the map's container (div element)
-                map: map,              // Reference to the map object
-                center: [lon, lat], // Longitude, latitude of map's center
-                zoom: 3,                // Initial zoom level
+                container: "viewDiv",
+                map: map,
+                center: [lon, lat],
+                zoom: 3,
                 minZoom: 2
             });
 
-            // Add a search widget
             var search = new Search({
                 view: view
             });
             view.ui.add(search, "top-right");
             view.constraints.minZoom = 2
 
-            // Add a scale bar widget
             var scaleBar = new ScaleBar({
                 view: view
             });
             view.ui.add(scaleBar, "bottom-left");
 
-            // Optional: Add a FeatureLayer if you want to display data on the map
-            var featureLayer = new FeatureLayer({
-                url: "https://services.arcgis.com/your-feature-layer-url"
-            });
-            map.add(featureLayer);
-
             var markerSymbol = {
-                type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                type: "simple-marker",
                 color: "#fdcd0d",
-                size: "16px", // Adjust size as needed
+                size: "16px",
                 outline: {
                     color: "black",
-                    width: 1
+                    width: 0
                 }
             };
 
@@ -313,45 +312,89 @@
             });
 
             view.graphics.add(pointGraphic);
-
-            const graphicsLayer = new GraphicsLayer();
-            map.add(graphicsLayer);
-            const colorMap = {
-                "wheat": "yellow",
-                "corn": "green",
-                "rice": "blue",
-                "soy": "brown",
-            };
+            const maxCropValue = Math.max(...cropData.map(crop => crop.crop));
             cropData.forEach(crop => {
-                const color = colorMap[crop.cropType] || "gray";  // Default color if crop type is not in colorMap
-
+                const color = getColor(crop.crop, maxCropValue);
                 const point = {
                     type: "point",
                     longitude: crop.x,
                     latitude: crop.y
                 };
-
-                const symbol = {
+                const markerSymbol = {
                     type: "simple-marker",
                     color: color,
-                    size: Math.sqrt(crop.value) * 5,  // Size based on crop value
-                    outline: { color: "white", width: 0.5 }
+                    size: `${Math.log(crop.crop)*1.5 + 1}px`,
+                    outline: {
+                        color: "white",
+                        width: 0
+                    }
                 };
 
-                const graphic = new Graphic({
-                    geometry: point,
-                    symbol: symbol,
-                    attributes: crop,
-                    popupTemplate: {
-                        title: "Crop Data",
-                        content: `Crop: ${crop.cropType} <br> Value: ${crop.value}`
+                const squarePolygon = {
+                    type: "polygon",
+                    rings: [
+                        [crop.x - 0.041666666666666667, crop.y - 0.041666666666666667], // Bottom-left corner
+                        [crop.x - 0.041666666666666667, crop.y + 0.041666666666666667], // Top-left corner
+                        [crop.x + 0.041666666666666667, crop.y + 0.041666666666666667], // Top-right corner
+                        [crop.x + 0.041666666666666667, crop.y - 0.041666666666666667], // Bottom-right corner
+                        [crop.x - 0.041666666666666667, crop.y - 0.041666666666666667]  // Close the polygon
+                    ]
+                };
+
+                const squareSymbol = {
+                    type: "simple-fill",
+                    color: color,
+                    style: "solid",
+                    outline: {
+                        color: "black",
+                        width: 0
                     }
+                };
+
+                const squareGraphic = new Graphic({
+                    geometry: squarePolygon,
+                    symbol: squareSymbol
+                });
+                view.graphics.add(squareGraphic);
+
+                const popupTemplate = {
+                    title: "Crop Information",
+                    content: `
+                        <b>Location:</b> ${crop.y}, ${crop.x}<br>
+                        <b>Crop Yield:</b> ${crop.crop} units
+                    `
+                };
+
+                const pointGraphic = new Graphic({
+                    geometry: point,
+                    symbol: markerSymbol,
+                    popupTemplate: popupTemplate
                 });
 
-                graphicsLayer.add(graphic);
+                //view.graphics.add(pointGraphic);
+                
+            });
+            view.on("click", function(event) {
+                view.hitTest(event).then(function(response) {
+                    if (response.results.length) {
+                        const graphic = response.results[0].graphic;
+                        // Show the popup if the graphic has a popup template
+                        if (graphic.popupTemplate) {
+                            view.popup.open({
+                                title: graphic.popupTemplate.title,
+                                content: graphic.popupTemplate.content,
+                                location: event.mapPoint // Location of the popup
+                            });
+                        }
+                    }
+                });
             });
         }); 
     </script>
     <script src="{{ url_for('static', filename='js/dash/agri/parea.js') }}"></script>
 </body>
 </html>
+
+
+
+

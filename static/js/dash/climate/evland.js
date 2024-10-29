@@ -85,8 +85,6 @@ function update() {
     }
 }
 
-window.onload = setSelected;
-
 function setSelectedDays() {
     const urlParams = new URLSearchParams(window.location.search);
     const fcstDays = urlParams.get('fcstDays') || '90';
@@ -100,7 +98,10 @@ function updateDays() {
     window.location.href = url.toString();
 }
 
-window.onload = setSelectedDays;
+window.onload = function() {
+    setSelected();
+    setSelectedDays();
+};
 
 document.addEventListener("DOMContentLoaded", function () {
     const rows = document.querySelectorAll("table tr");

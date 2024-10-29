@@ -91,7 +91,7 @@
             </div>
             <div class="item soil" list="closed">
                 <div class="d">
-                    <a href="/dashboard/soil?lat={{rlat}}&lon={{rlon}}&key=data" class="link">
+                    <a href="/dashboard/soil?lat={{rlat}}&lon={{rlon}}&key=data&cOneDays=30" class="link">
                         <div class="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-82v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q20-22 36-47.5t26.5-53q10.5-27.5 16-56.5t5.5-59q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z"/></svg>
                         </div>
@@ -104,23 +104,23 @@
                     </div>
                 </div>
                 <div class="l">
-                    <a href="/dashboard/soil/gwetprof?lat={{rlat}}&lon={{rlon}}&key=data" class="subitem">
+                    <a href="/dashboard/soil/gwetprof?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
                         Profile Soil Moisture
                     </a>
-                    <a href="/dashboard/soil/gwetroot?lat={{rlat}}&lon={{rlon}}&key=data" class="subitem">
+                    <a href="/dashboard/soil/gwetroot?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
                         Root Zone Soil Wetness
                     </a>
-                    <a href="/dashboard/soil/gwettop?lat={{rlat}}&lon={{rlon}}&key=data" class="subitem">
+                    <a href="/dashboard/soil/gwettop?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
                         Surface Soil Wetness
                     </a>
-                    <a href="/dashboard/soil/zom?lat={{rlat}}&lon={{rlon}}&key=data" class="subitem">
+                    <a href="/dashboard/soil/zom?lat={{rlat}}&lon={{rlon}}&key=data&startYear=1995&endYear=2024&groupBy=default&plotType=scatter&fcstDays=90" class="subitem">
                         Surface Roughness
                     </a>
                 </div>
             </div>
             <div class="item agri" list="closed">
                 <div class="d">
-                    <a href="/dashboard/agri={{rlat}}&lon={{rlon}}&key=data" class="link">
+                    <a href="#" class="link">
                         <div class="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680h120q33 0 56.5 23.5T360-600H160Zm80 360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm540 0q25 0 42.5-17.5T840-300q0-25-17.5-42.5T780-360q-25 0-42.5 17.5T720-300q0 25 17.5 42.5T780-240Zm-540-60q-25 0-42.5-17.5T180-360q0-25 17.5-42.5T240-420q25 0 42.5 17.5T300-360q0 25-17.5 42.5T240-300Zm560-139q26 5 43 13.5t37 27.5v-242q0-33-23.5-56.5T800-720H548l-42-44 56-56-28-28-142 142 30 28 56-56 42 42v92q0 33-23.5 56.5T440-520h-81q23 17 37 35t28 45h16q66 0 113-47t47-113v-40h200v201ZM641-320q6-27 14.5-43.5T682-400H436q4 23 4 40t-4 40h205Zm139 160q-58 0-99-41t-41-99q0-58 41-99t99-41q58 0 99 41t41 99q0 58-41 99t-99 41Zm-540 0q-83 0-141.5-58.5T40-360q0-83 58.5-141.5T240-560q83 0 141.5 58.5T440-360q0 83-58.5 141.5T240-160Zm393-360Z"/></svg>
                         </div>
@@ -144,9 +144,6 @@
                     </a>
                     <a href="/dashboard/agri/yield?lat={{rlat}}&lon={{rlon}}&key=data&year=2020&tech=R&crop=whea" class="subitem">
                         Yields
-                    </a>
-                    <a href="/dashboard/agri/map?lat={{rlat}}&lon={{rlon}}&key=data&year=2020&tech=R&crop=whea" class="subitem">
-                        Map
                     </a>
                 </div>
             </div>

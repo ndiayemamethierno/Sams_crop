@@ -12,8 +12,8 @@ models = {}
 
 def calcMean(key: str, param: str):
     dt = dtmaker.transform(key)[[param]]
-    lastDays = dt.mean().values
-    return np.round(lastDays, 2)
+    mean = dt.mean().values
+    return np.round(mean, 2)
 
 def calcMin(key: str, param: str):
     dt = dtmaker.transform(key)[[param]]
@@ -26,6 +26,11 @@ def calcMax(key: str, param: str):
     max = dt[param].max()
     date = dt[dt[param] == max].index[0]
     return max, date
+
+def calcStd(key: str, param: str):
+    dt = dtmaker.transform(key)[[param]]
+    std = dt.std().values
+    return np.round(std, 2)
 
 def foreCast(key: str, param: str, period: int):
     dt = dtmaker.transform(key)[[param]].dropna(subset=[param])
@@ -49,11 +54,13 @@ def showFcstTable(key: str, param: str, period: int):
     html = fcst[['Date', param, 'Lower', 'Upper', 'Trend']].round(2).to_html(index=False, escape=False)
     return html
 
-def getCropsData(lat: float, lon: float, var: str, tech: str, year: str, crops: str):
-    crops = [f"{crop.lower()}_{tech.lower()}" for crop in crops.split(",")] if crops else []
-    dt = dtmaker.getCountryData(lat, lon, var, tech, year)
+def getCropsData(lat: float, lon: float, var: str, tech: str, year: str, crops: str, type: str = "country"):
+    cropsT = f"{crops.lower()}_{tech.lower()}" if crops else []
+    dt = dtmaker.getCountryData(lat, lon, var, tech, year, type)
     dt.columns = dt.columns.str.lower()
-    return dt[['x', 'y'] + crops]
+    dt = dt[['x', 'y', cropsT]]
+    dt = dt.rename(columns={cropsT: "crop"})
+    return dt
 
 
 

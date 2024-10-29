@@ -61,20 +61,24 @@ function setSelected() {
     const year = urlParams.get('year') || '2020';
     const tech = urlParams.get('tech') || 'R';
     const crops = urlParams.get('crop') || 'whea';
+    const vars = urlParams.get('var') || 'physicalArea';
     document.getElementById("selectYear").value = year;
     document.getElementById("selectTech").value = tech;
-    document.getElementById("selectCul").value = crops
+    document.getElementById("selectCul").value = crops;
+    document.getElementById("selectVar").value = vars
 }
 
 function update() {
     const selectedYear = document.getElementById("selectYear").value;
     const selectedTech = document.getElementById("selectTech").value;
     const selectedCrops = document.getElementById("selectCul").value;
+    const selectedVar = document.getElementById("selectVar").value;
 
     const url = new URL(window.location.href);
     url.searchParams.set('year', selectedYear);
     url.searchParams.set('tech', selectedTech);
     url.searchParams.set('crop', selectedCrops);
+    url.searchParams.set('var', selectedVar);
     window.location.href = url.toString();
 }
 
