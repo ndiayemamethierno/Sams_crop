@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from datetime import date, timedelta
+import os
 
 from extern import fetch as f
 
@@ -26,4 +27,21 @@ def transform(key: str):
 def getLastNDays(key: str, n: int = 30):
     df = transform(key)
     return df.iloc[-7-int(n):-7]
+
+def getCountryData(lat: float, lon: float, var: str, tech: str, year: str):
+    chunks = []
+    key = f.getKey(var, tech, year)
+    for chunk in pd.read_csv(f.getKeyData(key), chunksize=10000):
+        if year == "2010":
+            filtered = chunk[chunk["iso3"] == f.getCountryFromPoint(lat, lon, year)]
+        else:
+            filtered = chunk[chunk["FIPS0"] == f.getCountryFromPoint(lat, lon, year)]
+        chunks.append(filtered)
+    
+    dt = pd.concat(chunks, ignore_index=True)
+    return dt
+
+
+
+
 

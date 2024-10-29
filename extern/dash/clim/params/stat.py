@@ -48,3 +48,12 @@ def showFcstTable(key: str, param: str, period: int):
                         'yhat_lower': 'Lower', 'yhat_upper': 'Upper'}, inplace=True)
     html = fcst[['Date', param, 'Lower', 'Upper', 'Trend']].round(2).to_html(index=False, escape=False)
     return html
+
+def getCropsData(lat: float, lon: float, var: str, tech: str, year: str, crops: str):
+    crops = [f"{crop.lower()}_{tech.lower()}" for crop in crops.split(",")] if crops else []
+    dt = dtmaker.getCountryData(lat, lon, var, tech, year)
+    dt.columns = dt.columns.str.lower()
+    return dt[['x', 'y'] + crops]
+
+
+

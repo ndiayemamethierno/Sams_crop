@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dash | Agri</title>
+    <title>Dash | Agri | Map</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -140,17 +140,20 @@
                     </div>
                 </div>
                 <div class="l">
-                    <a href="/dashboard/agri/parea?lat={{rlat}}&lon={{rlon}}&key=data" class="subitem">
+                    <a href="/dashboard/agri/parea?lat={{rlat}}&lon={{rlon}}&key=data&year=2020&tech=R&crop=whea" class="subitem">
                         Physical Area
                     </a>
-                    <a href="/dashboard/agri/harea?lat={{rlat}}&lon={{rlon}}&key=data" class="subitem">
+                    <a href="/dashboard/agri/harea?lat={{rlat}}&lon={{rlon}}&key=data&year=2020&tech=R&crop=whea" class="subitem">
                         Harvested Area
                     </a>
-                    <a href="/dashboard/agri/prod?lat={{rlat}}&lon={{rlon}}&key=data" class="subitem">
+                    <a href="/dashboard/agri/prod?lat={{rlat}}&lon={{rlon}}&key=data&year=2020&tech=R&crop=whea" class="subitem">
                         Production
                     </a>
-                    <a href="/dashboard/agri/yield?lat={{rlat}}&lon={{rlon}}&key=data" class="subitem">
+                    <a href="/dashboard/agri/yield?lat={{rlat}}&lon={{rlon}}&key=data&year=2020&tech=R&crop=whea" class="subitem">
                         Yields
+                    </a>
+                    <a href="/dashboard/agri/map?lat={{rlat}}&lon={{rlon}}&key=data&year=2020&tech=R&crop=whea" class="subitem">
+                        Map
                     </a>
                 </div>
             </div>
@@ -168,6 +171,74 @@
             </div>
         </header>
         <section class="content">
+            <div class="tasks">
+                <p class="text">MapDash</p>
+                <div class="dashexp">
+                    <p class="text">Year</p>
+                    <select name="selYear" id="selectYear" class="year">
+                        <option value="2010">2010</option>
+                        <option value="2020"selected>2020</option>
+                    </select>
+                    <p class="text">Technology</p>
+                    <select name="selTech" id="selectTech" class="tech">
+                        <option value="A">All Techs</option>
+                        <option value="I">Irrigated</option>
+                        <option value="R"selected>Rainfed</option>
+                    </select>
+                    <p class="text">Crops</p>
+                    <select multiple name="selCul" id="selectCul" class="cul" size="10">
+                        <optgroup label="Food Crops">
+                            <option value="whea" selected>Wheat</option>
+                            <option value="rice">Rice</option>
+                            <option value="maiz">Maize</option>
+                            <option value="barl">Barley</option>
+                            <option value="pmil">Pearl Millet</option>
+                            <option value="smil">Small Millet</option>
+                            <option value="sorg">Sorghum</option>
+                            <option value="ocer">Other Cereals</option>
+                            <option value="pota">Potato</option>
+                            <option value="swpo">Sweet Potato</option>
+                            <option value="yams">Yams</option>
+                            <option value="cass">Cassava</option>
+                            <option value="orts">Other Roots</option>
+                            <option value="bean">Bean</option>
+                            <option value="chic">Chickpea</option>
+                            <option value="cowp">Cowpea</option>
+                            <option value="pige">Pigeonpea</option>
+                            <option value="lent">Lentil</option>
+                            <option value="opul">Other Pulses</option>
+                            <option value="soyb">Soybean</option>
+                            <option value="grou">Groundnut</option>
+                            <option value="cnut">Coconut</option>
+                            <option value="bana">Banana</option>
+                            <option value="plnt">Plantain</option>
+                            <option value="trof">Tropical Fruit</option>
+                            <option value="temf">Temperate Fruit</option>
+                            <option value="vege">Vegetables</option>
+                        </optgroup>
+                    
+                        <!-- Non-Food Crops -->
+                        <optgroup label="Non-Food Crops">
+                            <option value="oilp">Oil Palm</option>
+                            <option value="sunf">Sunflower</option>
+                            <option value="rape">Rapeseed</option>
+                            <option value="sesa">Sesame Seed</option>
+                            <option value="ooil">Other Oil Crops</option>
+                            <option value="sugc">Sugarcane</option>
+                            <option value="sugb">Sugarbeet</option>
+                            <option value="cott">Cotton</option>
+                            <option value="ofib">Other Fibre Crops</option>
+                            <option value="acof">Arabica Coffee</option>
+                            <option value="rcof">Robusta Coffee</option>
+                            <option value="coco">Cocoa</option>
+                            <option value="teas">Tea</option>
+                            <option value="toba">Tobacco</option>
+                            <option value="rest">Rest of Crops</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <button type="button" onclick="update()">Submit</button>
+            </div>
             <div id="viewDiv"></div>
         </section>
     </section>
@@ -178,8 +249,10 @@
             "esri/widgets/Search",
             "esri/widgets/ScaleBar",
             "esri/layers/FeatureLayer",
-            "esri/Graphic"
-        ], function(Map, MapView, Search, ScaleBar, FeatureLayer, Graphic) {
+            "esri/Graphic",
+            "esri/layers/GraphicsLayer",
+            "esri/symbols/SimpleMarkerSymbol"
+        ], function(Map, MapView, Search, ScaleBar, FeatureLayer, Graphic, GraphicsLayer, SimpleMarkerSymbol) {
 
             // Initialize the map
             var map = new Map({
@@ -188,6 +261,7 @@
 
             var lat = {{ rlat | tojson }};
             var lon = {{ rlon | tojson }};
+            const cropData = {{ crops|tojson }};
 
             // Set up the map view
             var view = new MapView({
@@ -239,6 +313,43 @@
             });
 
             view.graphics.add(pointGraphic);
+
+            const graphicsLayer = new GraphicsLayer();
+            map.add(graphicsLayer);
+            const colorMap = {
+                "wheat": "yellow",
+                "corn": "green",
+                "rice": "blue",
+                "soy": "brown",
+            };
+            cropData.forEach(crop => {
+                const color = colorMap[crop.cropType] || "gray";  // Default color if crop type is not in colorMap
+
+                const point = {
+                    type: "point",
+                    longitude: crop.x,
+                    latitude: crop.y
+                };
+
+                const symbol = {
+                    type: "simple-marker",
+                    color: color,
+                    size: Math.sqrt(crop.value) * 5,  // Size based on crop value
+                    outline: { color: "white", width: 0.5 }
+                };
+
+                const graphic = new Graphic({
+                    geometry: point,
+                    symbol: symbol,
+                    attributes: crop,
+                    popupTemplate: {
+                        title: "Crop Data",
+                        content: `Crop: ${crop.cropType} <br> Value: ${crop.value}`
+                    }
+                });
+
+                graphicsLayer.add(graphic);
+            });
         }); 
     </script>
     <script src="{{ url_for('static', filename='js/dash/agri/parea.js') }}"></script>

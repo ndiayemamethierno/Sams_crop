@@ -8,9 +8,17 @@
 
 import requests
 import pandas as pd
+import dask.dataframe as dd
 from pymongo import MongoClient
 import numpy as np
 from datetime import date, timedelta
+import geopandas as gpd
+from shapely.geometry import Point
+from io import StringIO
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+from urllib.parse import quote_plus
 
 param = [
     'EVLAND', # Evaporation Land: The evaporation over land at the surface of the earth
@@ -34,7 +42,12 @@ param = [
 ]
 
 params = ','.join(param[:])
-client = MongoClient('mongodb://127.0.0.1:27017/mongosh?directConnection=true&serverSelectionTimeoutMS=2000')
+
+dp = Path(__file__).resolve().parents[2] / '.env'
+load_dotenv(dotenv_path=dp)
+password = quote_plus(os.getenv("ATLAS_PASSWORD"))
+uri = f"mongodb+srv://alagbehamid:{password}@sams.9s76z.mongodb.net/?retryWrites=true&w=majority&appName=sams"
+client = MongoClient(uri)
 db = client['sams']
 wsCol = db['wsCollection']
 
@@ -45,6 +58,8 @@ url = 'https://power.larc.nasa.gov/api/temporal/daily/point?parameters={}&commun
 
 dtDict: dict = {}
 coords = [None, None]
+
+world = gpd.read_file("ws/world-administrative-boundaries.shp")
 
 def getPointData(lat: float, lon: float):
     r = requests.get(url.format(params, lon, lat, start, end))
@@ -59,6 +74,48 @@ def getPointData(lat: float, lon: float):
 def getCachedData(lat, lon):
     data = wsCol.find_one({"lat": lat, "lon": lon})
     return data
+
+def getCountryFromPoint(lat: float, lon: float, year: str):
+    point = gpd.GeoDataFrame(geometry=[Point(lon, lat)], crs="EPSG:4326")
+    country = world[world.contains(point.iloc[0].geometry)]
+    if year == "2010":
+        return country["iso3"].iloc[0]
+    else:
+        return country["iso_3166_1_"].iloc[0]
+
+
+urlS3 = "https://sams-s3.s3.us-east-1.amazonaws.com/{}"
+
+def getKey(var: str, tech: str, year: str):
+    if year == "2005":
+        if var != "physicalArea":
+            key = os.path.join(var, tech, f"spam{year}V3r2_global_{var[0].upper()}_T{tech}.csv")
+            return key
+        else:
+            key = f"{var}/{tech}/spam{year}V3r2_global_A_T{tech}.csv"
+            return key
+    elif year == "2010":
+        if var != "physicalArea":
+            key = f"{var}/{tech}/spam{year}V2r0_global_{var[0].upper()}_T{tech}.csv"
+            return key
+        else:
+            key = f"{var}/{tech}/spam{year}V2r0_global_A_T{tech}.csv"
+            return key
+    else:
+        if var != "physicalArea":
+            key = f"{var}/{tech}/spam{year}V1r0_global_{var[0].upper()}_T{tech}.csv"
+            return key
+        else:
+            key = f"{var}/{tech}/spam{year}V1r0_global_A_T{tech}.csv"
+            return key
+
+def getKeyData(key: str):
+    lPath = os.path.join(os.getcwd(), "files", key)
+    if os.path.isfile(lPath):
+        return lPath
+    else:
+        obj = requests.get(urlS3.format(key))
+        return StringIO(obj.text)
 
 
 

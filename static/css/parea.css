@@ -17,7 +17,7 @@ body {
 
 .sidebar {
     background: var(--black);
-    width: 20%;
+    width: 16%;
     height: 100%;
     max-height: 100%;
     display: flex;
@@ -41,7 +41,7 @@ body {
 }
 
 .sidebar.opened ~ .main {
-    left: 20%;
+    left: 16%;
 }
 
 .sidebar.closed {
@@ -237,7 +237,7 @@ body {
 }
 
 .main {
-    width: 80%;
+    width: 84%;
     position: absolute;
     top: 0;
     height: 100%;
@@ -278,12 +278,88 @@ body {
 }
 
 .main .content {
-    margin-top: 4.5%;
+    margin-top: 4.55%;
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    height: 92%;
+    background: var(--black);
+}
+
+.main .content .tasks {
+    padding: 8px 10px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 92%;
+    align-items: flex-start;
+    justify-content: flex-start;
+    height: 100%;
+    width: 100%;
+    color: var(--white);
+}
+
+.main .content .tasks .text {
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--color17);
+    padding: 5px 10px;
+    margin-bottom: 15px;
+}
+
+.main .content .tasks .dashexp {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.main .content .tasks .dashexp .text {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 0;
+}
+
+.main .content .tasks .dashexp select {
+    width: 85%;
+    padding: 5px 10px;
+    border: 1px solid var(--lighter-sidebar-bg);
+    margin-left: 10px;
+    margin-bottom: 10px;
+    background: transparent;
+    color: var(--white);
+}
+
+.main .content .tasks .dashexp select:focus {
+    outline: none;
+}
+
+.main .content .tasks .dashexp select::-webkit-scrollbar {
+    display: none;
+}
+
+.main .content .tasks .dashexp select option {
+    background-color: var(--black);
+    color: white;
+    padding: 3px 8px;
+}
+
+.main .content .tasks .dashexp select optgroup {
+    background-color: var(--black);
+    color: white;
+}
+
+.main .content .tasks button {
+    margin-top: 20px;
+    width: 45%;
+    padding: 8px 25px;
+    border: 1px solid var(--black);
+    outline: none;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.main .content .tasks button:hover {
+    background: var(--white);
 }
 
 .main .content #viewDiv {

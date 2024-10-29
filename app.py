@@ -1,21 +1,15 @@
 from flask import Flask, request, render_template, redirect, url_for, jsonify
-from pymongo import MongoClient
 import numpy as np
+import pandas as pd
 from bokeh.plotting import figure
 from bokeh.embed import components
-from urllib.parse import quote_plus
+
 
 from extern import fetch as f
 from extern.dash.clim import statClim as stc
 from extern.dash.clim import plotClim as ptc
 from extern.dash.clim.params import stat as s
 from extern.dash.clim.params import plot as p
-
-password = quote_plus("mongodbatlasBlessing16@#")
-uri = f"mongodb+srv://alagbehamid:{password}@sams.9s76z.mongodb.net/?retryWrites=true&w=majority&appName=sams"
-client = MongoClient(uri)
-db = client['sams']
-wsCol = db['wsCollection']
 
 app = Flask(__name__)
 
@@ -511,8 +505,6 @@ def loadDashClimateRh2m():
                         )
 
 
-
-
 @app.route('/dashboard/agri/parea', methods=['GET','POST'])
 def loadDashAgriPhysicalArea():
     if request.method == 'POST':
@@ -522,10 +514,38 @@ def loadDashAgriPhysicalArea():
         lon = request.args.get('lon', default=None)
         lat = request.args.get('lat', default=None)
         key = request.args.get('key', default=None)
+        year = request.args.get('year', default=None)
+        tech = request.args.get('tech', default=None)
+        crop = request.args.get('crop', default=None)
 
-    #nCentroid = f.getNearestCentroid(float(lat), float(lon))
+    data = s.getCropsData(lat, lon, "physicalArea", tech, year, crop)
+    if isinstance(data, pd.DataFrame):
+        crops = data.to_dict(orient='records')
+    else:
+        crops = data
 
     return render_template('dashboard/agri/parea.html',
+                           rlat = lat,
+                           rlon = lon, 
+                           crops = crops
+                        )
+
+
+
+@app.route('/dashboard/agri/map', methods=['GET','POST'])
+def loadDashMapArea():
+    if request.method == 'POST':
+        lon = request.form['lon']
+        lat = request.form['lat']
+    else:
+        lon = request.args.get('lon', default=None)
+        lat = request.args.get('lat', default=None)
+        key = request.args.get('key', default=None)
+
+    #nCentroid = f.getNearestCentroid(float(lat), float(lon))
+    #unit = s.getAgriDataUnit(lat, lon, key="harvested/A/spam2010V2r0_global_H_TA.csv")
+
+    return render_template('dashboard/agri/map.html',
                            rlat = lat,
                            rlon = lon
                         )

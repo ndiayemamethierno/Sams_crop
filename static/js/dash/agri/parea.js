@@ -56,5 +56,35 @@ chevrons.forEach(chevron => {
     })
 });
 
+function setSelected() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const year = urlParams.get('year') || '2020';
+    const tech = urlParams.get('tech') || 'R';
+    const crops = urlParams.get('crop') ? urlParams.get('crop').split(',') : ['whea'];
+    document.getElementById("selectYear").value = year;
+    document.getElementById("selectTech").value = tech;
+    
+    Array.from(selectCul.options).forEach(option => {
+        option.selected = crops.includes(option.value); // Select the crops that are in the URL
+    });
+}
+
+function update() {
+    const selectedYear = document.getElementById("selectYear").value;
+    const selectedTech = document.getElementById("selectTech").value;
+    const options = Array.from(document.getElementById("selectCul").selectedOptions);
+    const selectedCrops = options.map(option => option.value).join(',');
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('year', selectedYear);
+    url.searchParams.set('tech', selectedTech);
+    url.searchParams.set('crop', selectedCrops);
+    window.location.href = url.toString();
+}
+
+window.onload = setSelected;
+
+
+
 
 
