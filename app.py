@@ -1192,7 +1192,7 @@ def loadDashAgriYield():
     data = s.getCropsData(lat, lon, "yields", tech, year, crop)
     crops = data.to_dict(orient='records')
 
-    return render_template('dashboard/agri/harea.html',
+    return render_template('dashboard/agri/yield.html',
                            rlat = lat,
                            rlon = lon, 
                            crops = crops
