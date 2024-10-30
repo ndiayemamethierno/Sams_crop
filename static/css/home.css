@@ -70,6 +70,10 @@ body {
     color: var(--white);
 }
 
+.sidebar .logo_part {
+    text-decoration: none;
+}
+
 .sidebar .logo_part .logo {
     color: var(--lighter-sidebar-bg);
     margin-right: 15px;
