@@ -28,3 +28,21 @@ This application requires some data to work correctly. The climatic data is extr
 If you want the app to be fast, contact us to get the data locally.
 
 
+## Build the project
+
+The application is built upon Python 3.11.9. A version of Python equal or greater to this one is required for the project built. Note that you should probably make sure that Python is existing on your computer and that its version is >= 3.11.9.
+Open a terminal with your machine and type <python --version>
+
+- First downlaod the zip file of the repository and unzip it locally
+- Navigate to the project folder: Open a terminal and navigate to the folder where the repository is unzipped.
+- Create a Virtual Environment: type <python -m venv env>: This will create a virtual environment in a folder named env.
+- Activate the Virtual Environment: 
+On Windows: <.\env\Scripts\activate>
+On macOS/Linux: "source env/bin/activate"
+
+- Install Packages from requirements.txt: <pip install -r requirements.txt>
+- Launch the application: <python app.py>
+
+
+
+
