@@ -1124,12 +1124,16 @@ def loadDashAgriPhysicalArea():
         crop = request.args.get('crop', default=None)
 
     data = s.getCropsData(lat, lon, "physicalArea", tech, year, crop)
+    max = data['crop'].max()
+    min = data['crop'].min()
     crops = data.to_dict(orient='records')
 
     return render_template('dashboard/agri/parea.html',
                            rlat = lat,
                            rlon = lon, 
-                           crops = crops
+                           crops = crops,
+                           max = max,
+                           min = min
                         )
 
 @app.route('/dashboard/agri/harea', methods=['GET','POST'])
@@ -1146,12 +1150,16 @@ def loadDashAgriHarvestedArea():
         crop = request.args.get('crop', default=None)
 
     data = s.getCropsData(lat, lon, "harvested", tech, year, crop)
+    max = data['crop'].max()
+    min = data['crop'].min()
     crops = data.to_dict(orient='records')
 
     return render_template('dashboard/agri/harea.html',
                            rlat = lat,
                            rlon = lon, 
-                           crops = crops
+                           crops = crops,
+                           max = max,
+                           min = min
                         )
 
 @app.route('/dashboard/agri/prod', methods=['GET','POST'])
@@ -1168,12 +1176,16 @@ def loadDashAgriProduction():
         crop = request.args.get('crop', default=None)
 
     data = s.getCropsData(lat, lon, "productions", tech, year, crop)
+    max = data['crop'].max()
+    min = data['crop'].min()
     crops = data.to_dict(orient='records')
 
     return render_template('dashboard/agri/prod.html',
                            rlat = lat,
                            rlon = lon, 
-                           crops = crops
+                           crops = crops,
+                           max = max,
+                           min = min
                         )
 
 @app.route('/dashboard/agri/yield', methods=['GET','POST'])
@@ -1190,12 +1202,16 @@ def loadDashAgriYield():
         crop = request.args.get('crop', default=None)
 
     data = s.getCropsData(lat, lon, "yields", tech, year, crop)
+    max = data['crop'].max()
+    min = data['crop'].min()
     crops = data.to_dict(orient='records')
 
     return render_template('dashboard/agri/yield.html',
                            rlat = lat,
                            rlon = lon, 
-                           crops = crops
+                           crops = crops,
+                           max = max,
+                           min = min
                         )
 
 

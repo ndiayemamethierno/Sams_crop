@@ -370,6 +370,43 @@ body {
     position: relative;
 }
 
+.legend {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #333;
+    width: 200px;
+}
+
+.legend h3 {
+    margin-top: 0;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.color-ramp {
+    height: 20px;
+    background: linear-gradient(to right, rgb(255, 0, 0), rgb(255, 255, 0), rgb(0, 255, 0));
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+
+.legend-labels {
+    display: flex;
+    justify-content: space-between;
+}
+
+.legend-labels span {
+    font-size: 10px;
+}
 
 
 

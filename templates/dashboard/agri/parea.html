@@ -239,6 +239,23 @@
             <div id="viewDiv"></div>
         </section>
     </section>
+
+    <section  id="mapLegend" class="legend">
+        <h3>Crop Density Legend</h3>
+        <div class="color-ramp"></div>
+        <div class="legend-labels">
+            <span id="high">High Density</span>
+            <span id="mid">Medium Density</span>
+            <span id="low">Low Density</span>
+        </div>
+    </section>
+    <script>
+        maxCropValue = {{ max|tojson }}
+        minCropValue = {{ min|tojson }}
+        document.getElementById("low").innerText = `Low (${minCropValue})`;
+        document.getElementById("mid").innerText = `Medium (${Math.round(maxCropValue / 2)})`;
+        document.getElementById("high").innerText = `High (${maxCropValue})`;
+    </script>
     <script>
         function getColor(value, maxValue) {
             if (value === 0) return "rgba(255, 255, 102, 0)";

@@ -59,7 +59,7 @@ url = 'https://power.larc.nasa.gov/api/temporal/daily/point?parameters={}&commun
 dtDict: dict = {}
 coords = [None, None]
 
-world = gpd.read_file("ws/world-administrative-boundaries.shp")
+world = gpd.read_file("ws/world-administrative-boundaries.shp", encoding="ISO-8859-1")
 
 def getPointData(lat: float, lon: float):
     r = requests.get(url.format(params, lon, lat, start, end))
@@ -81,7 +81,7 @@ def getCountryFromPoint(lat: float, lon: float, year: str):
     if year == "2010":
         return country["iso3"].iloc[0]
     else:
-        return [country["iso_3166_1_"].iloc[0], country["name"].iloc[0]]
+        return [country["i_3166_"].iloc[0], country["name"].iloc[0]]
 
 
 urlS3 = "https://sams-s3.s3.us-east-1.amazonaws.com/{}"

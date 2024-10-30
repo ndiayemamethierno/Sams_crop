@@ -5,6 +5,10 @@ SAMS is an open source agriculture dashboard. Its purpose is to describe the bes
 
 This project was powered by [Power Larc NASA](https://power.larc.nasa.gov/) (for climatic and soil data) and [MapSpam](https://mapspam.info/) for Agriculture Data
 
+
+[Visuals of the application](./static/img/img.jpeg)
+
+
 ## Development
 
 This project was developed using Flask mainly as Web Development framework. The dashboard uses Python 3.11.9 as Language for processes (core) and HTML, JS and CSS for pages (front).
