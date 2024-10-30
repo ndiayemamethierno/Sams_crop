@@ -3,7 +3,7 @@ Smart Agriculture Monitoring System: Harvesting and Analysing World AgriData
 
 SAMS is an open source agriculture dashboard. Its purpose is to describe the best possible impact of climatic conditions and soil characteristics on the yield of a total of 42 crops. It carries with it all analysis and forecasts for each variable selected. The main objective of this project is to give insights on climate data and agricultural data.
 
-This project was powered by ![Power Larc NASA](https://power.larc.nasa.gov/) (for climatic and soil data) and ![MapSpam](https://mapspam.info/) for Agriculture Data
+This project was powered by [Power Larc NASA](https://power.larc.nasa.gov/) (for climatic and soil data) and [MapSpam](https://mapspam.info/) for Agriculture Data
 
 ## Development
 
