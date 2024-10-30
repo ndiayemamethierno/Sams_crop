@@ -29,21 +29,7 @@ def getLastNDays(key: str, n: int = 30, dec: int = 0):
     return df.iloc[-7-int(n)-dec:-7]
 
 def getCountryData(lat: float, lon: float, var: str, tech: str, year: str, type: str = "country"):
-    if type == "country":
-        chunks = []
-        key = f.getKey(var, tech, year)
-        for chunk in pd.read_csv(f.getKeyData(key), chunksize=10000, encoding="ISO-8859-1"):
-            if year == "2010":
-                filtered = chunk[chunk["iso3"] == f.getCountryFromPoint(lat, lon, year)]
-            else:
-                filtered = chunk[(chunk["FIPS0"] == f.getCountryFromPoint(lat, lon, year)[0]) | (chunk["ADM0_NAME"] == f.getCountryFromPoint(lat, lon, year)[1])]
-            chunks.append(filtered)
-        
-        dt = pd.concat(chunks, ignore_index=True)
-        return dt
-    else:
-        key = f.getKey(var, tech, year)
-        return pd.read_csv(f.getKeyData(key), encoding="ISO-8859-1")
+    return f.getCountryData(lat, lon, var, tech, year)
 
 
 

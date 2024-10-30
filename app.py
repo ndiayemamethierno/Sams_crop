@@ -1127,6 +1127,7 @@ def loadDashAgriPhysicalArea():
     max = data['crop'].max()
     min = data['crop'].min()
     crops = data.to_dict(orient='records')
+    data = None
 
     return render_template('dashboard/agri/parea.html',
                            rlat = lat,
@@ -1153,6 +1154,7 @@ def loadDashAgriHarvestedArea():
     max = data['crop'].max()
     min = data['crop'].min()
     crops = data.to_dict(orient='records')
+    data = None
 
     return render_template('dashboard/agri/harea.html',
                            rlat = lat,
@@ -1179,6 +1181,7 @@ def loadDashAgriProduction():
     max = data['crop'].max()
     min = data['crop'].min()
     crops = data.to_dict(orient='records')
+    data = None
 
     return render_template('dashboard/agri/prod.html',
                            rlat = lat,
@@ -1205,6 +1208,7 @@ def loadDashAgriYield():
     max = data['crop'].max()
     min = data['crop'].min()
     crops = data.to_dict(orient='records')
+    data = None
 
     return render_template('dashboard/agri/yield.html',
                            rlat = lat,

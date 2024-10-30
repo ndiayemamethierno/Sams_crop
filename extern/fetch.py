@@ -17,6 +17,9 @@ from shapely.geometry import Point
 from io import StringIO
 import os
 from urllib.parse import quote_plus
+import asyncio
+import aiohttp
+import time
 
 param = [
     'EVLAND', # Evaporation Land: The evaporation over land at the surface of the earth
@@ -46,6 +49,7 @@ uri = f"mongodb+srv://alagbehamid:{password}@sams.9s76z.mongodb.net/?retryWrites
 client = MongoClient(uri)
 db = client['sams']
 wsCol = db['wsCollection']
+agCol = db['agCollection']
 
 start = "19950101"
 end = date.today() - timedelta(days=2)
@@ -54,6 +58,7 @@ url = 'https://power.larc.nasa.gov/api/temporal/daily/point?parameters={}&commun
 
 dtDict: dict = {}
 coords = [None, None]
+
 
 world = gpd.read_file("ws/world-administrative-boundaries.shp", encoding="ISO-8859-1")
 
@@ -112,6 +117,66 @@ def getKeyData(key: str):
     else:
         obj = requests.get(urlS3.format(key))
         return StringIO(obj.text)
+
+
+def getCountryData(lat: float, lon: float, var: str, tech: str, year: str, type: str = "country"):
+    if type == "country":
+        chunks = []
+        key = getKey(var, tech, year)
+        for chunk in pd.read_csv(getKeyData(key), chunksize=10000, encoding="ISO-8859-1"):
+            if year == "2010":
+                filtered = chunk[chunk["iso3"] == getCountryFromPoint(lat, lon, year)]
+            else:
+                filtered = chunk[(chunk["FIPS0"] == getCountryFromPoint(lat, lon, year)[0]) | (chunk["ADM0_NAME"] == getCountryFromPoint(lat, lon, year)[1])]
+            chunks.append(filtered)
+        
+        dt = pd.concat(chunks, ignore_index=True)
+        return dt
+    else:
+        key = getKey(var, tech, year)
+        return pd.read_csv(getKeyData(key), encoding="ISO-8859-1")
+
+
+
+def getCoordsPointCountry(lat: float, lon: float, var: str, tech: str, year: str, crops: str, type: str = "country"):
+    cropsT = f"{crops.lower()}_{tech.lower()}" if crops else []
+    dt = getCountryData(lat, lon, var, tech, year)
+    dt.columns = dt.columns.str.lower()
+    dt = dt[['x', 'y', cropsT]]
+    dt = dt.rename(columns={cropsT: "crop"})
+    dt = dt[(dt['crop'] != 0) & (dt['crop'].notna())]
+    return dt[['x', 'y']].values, dt
+
+
+
+urlC = 'https://power.larc.nasa.gov/api/temporal/monthly/point?start={}&end={}&latitude={}&longitude={}&community=RE&parameters={}&format=json&header=false'
+def getTasks(session, coords, year):
+    tasks = []
+    for coord in coords:
+        tasks.append(asyncio.create_task(session.get(urlC.format(year, year, coord[1], coord[0], params), ssl=False)))
+    return tasks
+
+async def fetcher(lat: float, lon: float, var: str, tech: str, year: str):
+    coords, crop = getCoordsPointCountry(lat, lon, var, tech, year)
+    dt = pd.DataFrame()
+    async with aiohttp.ClientSession() as s:
+        tasks = getTasks(s, coords, year)
+        responses = await asyncio.gather(*tasks)
+        for idx, r in enumerate(responses):
+            resp = await r.json()
+            params = resp["properties"]["parameter"]
+            coordVal = {'x': coords[idx][0], 'y': coords[idx][1]}
+            for param, values in params.items():
+                coordVal[param] = values[-1]
+            dt = pd.concat([dt, pd.DataFrame([coordVal])], ignore_index=True)
+    dt = dt.merge(crop[['x', 'y', 'crop']], on=['x', 'y'], how='left')
+    return dt
+
+def runFetcher(lat: float, lon: float, var: str, tech: str, year: str):
+    asyncio.run(fetcher(lat, lon, var, tech, year))
+
+
+
 
 
 
