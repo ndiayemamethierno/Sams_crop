@@ -16,8 +16,6 @@ import geopandas as gpd
 from shapely.geometry import Point
 from io import StringIO
 import os
-from dotenv import load_dotenv
-from pathlib import Path
 from urllib.parse import quote_plus
 
 param = [
@@ -43,9 +41,7 @@ param = [
 
 params = ','.join(param[:])
 
-dp = Path(__file__).resolve().parents[2] / '.env'
-load_dotenv(dotenv_path=dp)
-password = quote_plus(os.getenv("ATLAS_PASSWORD"))
+password = quote_plus("mongodbatlasBlessing16@#")
 uri = f"mongodb+srv://alagbehamid:{password}@sams.9s76z.mongodb.net/?retryWrites=true&w=majority&appName=sams"
 client = MongoClient(uri)
 db = client['sams']
