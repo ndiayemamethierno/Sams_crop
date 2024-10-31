@@ -91,24 +91,24 @@ urlS3 = "https://sams-s3.s3.us-east-1.amazonaws.com/{}"
 def getKey(var: str, tech: str, year: str):
     if year == "2005":
         if var != "physicalArea":
-            key = os.path.join(var, tech, f"spam{year}V3r2_global_{var[0].upper()}_T{tech}.csv")
+            key = os.path.join(var, tech, f"spam{year}V3r2_global_{var[0].upper()}_T{tech}.xlsx")
             return key
         else:
-            key = f"{var}/{tech}/spam{year}V3r2_global_A_T{tech}.csv"
+            key = f"{var}/{tech}/spam{year}V3r2_global_A_T{tech}.xlsx"
             return key
     elif year == "2010":
         if var != "physicalArea":
-            key = f"{var}/{tech}/spam{year}V2r0_global_{var[0].upper()}_T{tech}.csv"
+            key = f"{var}/{tech}/spam{year}V2r0_global_{var[0].upper()}_T{tech}.xlsx"
             return key
         else:
-            key = f"{var}/{tech}/spam{year}V2r0_global_A_T{tech}.csv"
+            key = f"{var}/{tech}/spam{year}V2r0_global_A_T{tech}.xlsx"
             return key
     else:
         if var != "physicalArea":
-            key = f"{var}/{tech}/spam{year}V1r0_global_{var[0].upper()}_T{tech}.csv"
+            key = f"{var}/{tech}/spam{year}V1r0_global_{var[0].upper()}_T{tech}.xlsx"
             return key
         else:
-            key = f"{var}/{tech}/spam{year}V1r0_global_A_T{tech}.csv"
+            key = f"{var}/{tech}/spam{year}V1r0_global_A_T{tech}.xlsx"
             return key
 
 def getKeyData(key: str):
@@ -124,7 +124,7 @@ def getCountryData(lat: float, lon: float, var: str, tech: str, year: str, type:
     if type == "country":
         chunks = []
         key = getKey(var, tech, year)
-        for chunk in pd.read_csv(getKeyData(key), chunksize=10000, encoding="ISO-8859-1"):
+        for chunk in pd.read_excel(getKeyData(key), chunksize=10000, encoding="ISO-8859-1"):
             if year == "2010":
                 filtered = chunk[chunk["iso3"] == getCountryFromPoint(lat, lon, year)]
             else:
@@ -135,7 +135,7 @@ def getCountryData(lat: float, lon: float, var: str, tech: str, year: str, type:
         return dt
     else:
         key = getKey(var, tech, year)
-        return pd.read_csv(getKeyData(key), encoding="ISO-8859-1")
+        return pd.read_excel(getKeyData(key), encoding="ISO-8859-1")
 
 
 
