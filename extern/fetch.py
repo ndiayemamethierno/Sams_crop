@@ -122,20 +122,16 @@ def getKeyData(key: str):
 
 def getCountryData(lat: float, lon: float, var: str, tech: str, year: str, type: str = "country"):
     if type == "country":
-        chunks = []
         key = getKey(var, tech, year)
-        for chunk in pd.read_excel(getKeyData(key), chunksize=10000, encoding="ISO-8859-1"):
-            if year == "2010":
-                filtered = chunk[chunk["iso3"] == getCountryFromPoint(lat, lon, year)]
-            else:
-                filtered = chunk[(chunk["FIPS0"] == getCountryFromPoint(lat, lon, year)[0]) | (chunk["ADM0_NAME"] == getCountryFromPoint(lat, lon, year)[1])]
-            chunks.append(filtered)
-        
-        dt = pd.concat(chunks, ignore_index=True)
-        return dt
+        dt = pd.read_excel(getKeyData(key))
+        if year == "2010":
+            filtered = dt[dt["iso3"] == getCountryFromPoint(lat, lon, year)]
+        else:
+            filtered = dt[(dt["FIPS0"] == getCountryFromPoint(lat, lon, year)[0]) | (dt["ADM0_NAME"] == getCountryFromPoint(lat, lon, year)[1])]
+        return filtered
     else:
         key = getKey(var, tech, year)
-        return pd.read_excel(getKeyData(key), encoding="ISO-8859-1")
+        return pd.read_excel(getKeyData(key))
 
 
 
