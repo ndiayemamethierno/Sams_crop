@@ -1,5 +1,0 @@
-[build]
-  PYTHON_VERSION = "3.13"
-  command = "pip install --upgrade pip && pip install -r requirements.txt"
-  publish = "public"  # Remplacez "public" par le dossier de publication de votre application (souvent "build" ou "dist" pour certains projets)
-
