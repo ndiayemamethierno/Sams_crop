@@ -19,7 +19,8 @@ import os
 from urllib.parse import quote_plus
 import asyncio
 import aiohttp
-import time
+import gridfs
+from io import BytesIO
 
 param = [
     'EVLAND', # Evaporation Land: The evaporation over land at the surface of the earth
@@ -138,7 +139,7 @@ def getCountryData(lat: float, lon: float, var: str, tech: str, year: str, type:
 
 
 
-def getCoordsPointCountry(lat: float, lon: float, var: str, tech: str, year: str, crops: str, type: str = "country"):
+def getCoordsPointCountry(lat: float, lon: float, var: str, tech: str, year: str, crops: str):
     cropsT = f"{crops.lower()}_{tech.lower()}" if crops else []
     dt = getCountryData(lat, lon, var, tech, year)
     dt.columns = dt.columns.str.lower()
@@ -149,31 +150,48 @@ def getCoordsPointCountry(lat: float, lon: float, var: str, tech: str, year: str
 
 
 
-urlC = 'https://power.larc.nasa.gov/api/temporal/monthly/point?start={}&end={}&latitude={}&longitude={}&community=RE&parameters={}&format=json&header=false'
+""" urlC = 'https://power.larc.nasa.gov/api/temporal/monthly/point?start={}&end={}&latitude={}&longitude={}&community=RE&parameters={}&format=json&header=false'
 def getTasks(session, coords, year):
     tasks = []
     for coord in coords:
         tasks.append(asyncio.create_task(session.get(urlC.format(year, year, coord[1], coord[0], params), ssl=False)))
     return tasks
 
-async def fetcher(lat: float, lon: float, var: str, tech: str, year: str):
-    coords, crop = getCoordsPointCountry(lat, lon, var, tech, year)
+async def fetcher(lat: float, lon: float, var: str, tech: str, year: str, crops: str):
+    eF = agCol.find_one({"filename": f"{getCountryFromPoint(lat, lon, year)}.csv"})
+    if eF:
+        with agCol.get(eF._id) as file:
+            dt = pd.read_csv(file)
+        return dt
+        
+    coords, crop = getCoordsPointCountry(lat, lon, var, tech, year, crops)
+    if isinstance(coords, np.ndarray) and coords.size == 0:
+        return None
     dt = pd.DataFrame()
     async with aiohttp.ClientSession() as s:
         tasks = getTasks(s, coords, year)
         responses = await asyncio.gather(*tasks)
         for idx, r in enumerate(responses):
-            resp = await r.json()
-            params = resp["properties"]["parameter"]
+            resp = {
+                "lat": lat,
+                "lon": lon,
+                "data": await r.json()
+            }
+            return resp["data"]
+            params = resp["data"]["properties"]["parameter"]
             coordVal = {'x': coords[idx][0], 'y': coords[idx][1]}
             for param, values in params.items():
-                coordVal[param] = values[-1]
+                coordVal[param] = values[f"{year}13"]
             dt = pd.concat([dt, pd.DataFrame([coordVal])], ignore_index=True)
     dt = dt.merge(crop[['x', 'y', 'crop']], on=['x', 'y'], how='left')
+    cB = BytesIO()
+    dt.to_csv(cB, index=False)
+    cB.seek(0)
+    agCol.put(cB, filename=f"{getCountryFromPoint(lat, lon, year)}.csv")
     return dt
 
-def runFetcher(lat: float, lon: float, var: str, tech: str, year: str):
-    asyncio.run(fetcher(lat, lon, var, tech, year))
+def runFetcher(lat: float, lon: float, var: str, tech: str, year: str, crops: str):
+    return asyncio.run(fetcher(lat, lon, var, tech, year, crops)) """
 
 
 

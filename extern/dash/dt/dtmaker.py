@@ -31,7 +31,8 @@ def getLastNDays(key: str, n: int = 30, dec: int = 0):
 def getCountryData(lat: float, lon: float, var: str, tech: str, year: str, type: str = "country"):
     return f.getCountryData(lat, lon, var, tech, year)
 
-
+# def getCountryRasterDataFromPoint(lat: float, lon: float, var: str, tech: str, year: str, crops: str):
+#     return f.runFetcher(lat, lon, var, tech, year, crops)
 
 
 

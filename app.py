@@ -12,6 +12,7 @@ from extern.dash.soil import statSoil as sts
 from extern.dash.soil import plotSoil as pts
 from extern.dash.params import stat as s
 from extern.dash.params import plot as p
+from extern.dash.dt import dtmaker as d
 
 app = Flask(__name__)
 
@@ -1218,10 +1219,29 @@ def loadDashAgriYield():
                            min = min
                         )
 
+@app.route('/dashboard/analysis', methods=['GET','POST'])
+def loadDashAnalysisBoard():
+    if request.method == 'POST':
+        lon = request.form['lon']
+        lat = request.form['lat']
+    else:
+        lon = request.args.get('lon', default=None)
+        lat = request.args.get('lat', default=None)
+        key = request.args.get('key', default=None)
+        year = request.args.get('year', default=None)
+        tech = request.args.get('tech', default=None)
+        crop = request.args.get('crop', default=None)
 
+    # dt = d.getCountryRasterDataFromPoint(lat, lon, "physicalArea", tech, year, crop)
+
+    return render_template('dashboard/analysis.html',
+                           rlat = lat,
+                           rlon = lon
+                        #    dt = dt
+                        )
 
 
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
