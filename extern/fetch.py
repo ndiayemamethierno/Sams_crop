@@ -91,24 +91,24 @@ urlS3 = "https://sams-s3.s3.us-east-1.amazonaws.com/{}"
 def getKey(var: str, tech: str, year: str):
     if year == "2005":
         if var != "physicalArea":
-            key = os.path.join(var, tech, f"spam{year}V3r2_global_{var[0].upper()}_T{tech}.xlsx")
+            key = os.path.join(var, tech, f"spam{year}V3r2_global_{var[0].upper()}_T{tech}.csv")
             return key
         else:
-            key = f"{var}/{tech}/spam{year}V3r2_global_A_T{tech}.xlsx"
+            key = f"{var}/{tech}/spam{year}V3r2_global_A_T{tech}.csv"
             return key
     elif year == "2010":
         if var != "physicalArea":
-            key = f"{var}/{tech}/spam{year}V2r0_global_{var[0].upper()}_T{tech}.xlsx"
+            key = f"{var}/{tech}/spam{year}V2r0_global_{var[0].upper()}_T{tech}.csv"
             return key
         else:
-            key = f"{var}/{tech}/spam{year}V2r0_global_A_T{tech}.xlsx"
+            key = f"{var}/{tech}/spam{year}V2r0_global_A_T{tech}.csv"
             return key
     else:
         if var != "physicalArea":
-            key = f"{var}/{tech}/spam{year}V1r0_global_{var[0].upper()}_T{tech}.xlsx"
+            key = f"{var}/{tech}/spam{year}V1r0_global_{var[0].upper()}_T{tech}.csv"
             return key
         else:
-            key = f"{var}/{tech}/spam{year}V1r0_global_A_T{tech}.xlsx"
+            key = f"{var}/{tech}/spam{year}V1r0_global_A_T{tech}.csv"
             return key
 
 def getKeyData(key: str):
@@ -122,16 +122,20 @@ def getKeyData(key: str):
 
 def getCountryData(lat: float, lon: float, var: str, tech: str, year: str, type: str = "country"):
     if type == "country":
+        chunks = []
         key = getKey(var, tech, year)
-        dt = pd.read_excel(getKeyData(key))
-        if year == "2010":
-            filtered = dt[dt["iso3"] == getCountryFromPoint(lat, lon, year)]
-        else:
-            filtered = dt[(dt["FIPS0"] == getCountryFromPoint(lat, lon, year)[0]) | (dt["ADM0_NAME"] == getCountryFromPoint(lat, lon, year)[1])]
-        return filtered
+        for chunk in pd.read_csv(getKeyData(key), chunksize=10000, encoding="ISO-8859-1"):
+            if year == "2010":
+                filtered = chunk[chunk["iso3"] == getCountryFromPoint(lat, lon, year)]
+            else:
+                filtered = chunk[(chunk["FIPS0"] == getCountryFromPoint(lat, lon, year)[0]) | (chunk["ADM0_NAME"] == getCountryFromPoint(lat, lon, year)[1])]
+            chunks.append(filtered)
+        
+        dt = pd.concat(chunks, ignore_index=True)
+        return dt
     else:
         key = getKey(var, tech, year)
-        return pd.read_excel(getKeyData(key))
+        return pd.read_csv(getKeyData(key), encoding="ISO-8859-1")
 
 
 
